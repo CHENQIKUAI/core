@@ -3,7 +3,7 @@
 // smaller files w/ better tree-shaking.
 
 // @ts-check
-const { build } = require('esbuild')
+const { build } = require('esbuild') // esbuild用来打包
 const nodePolyfills = require('@esbuild-plugins/node-modules-polyfill')
 const { resolve, relative } = require('path')
 const args = require('minimist')(process.argv.slice(2))
