@@ -13,6 +13,8 @@ const format = args.f || 'global'
 const inlineDeps = args.i || args.inline
 const pkg = require(resolve(__dirname, `../packages/${target}/package.json`))
 
+/* esbuild中alias是在哪里设置的？ */
+
 // resolve output
 const outputFormat = format.startsWith('global')
   ? 'iife'
@@ -68,6 +70,11 @@ if (!inlineDeps) {
   }
 }
 
+console.log(
+  'entryPoints: ',
+  resolve(__dirname, `../packages/${target}/src/index.ts`)
+)
+
 build({
   entryPoints: [resolve(__dirname, `../packages/${target}/src/index.ts`)],
   outfile,
@@ -101,6 +108,7 @@ build({
   },
   watch: {
     onRebuild(error) {
+      // 重新构建时，打印
       if (!error) console.log(`rebuilt: ${relativeOutfile}`)
     }
   }

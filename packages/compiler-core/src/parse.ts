@@ -427,6 +427,7 @@ function parseElement(
 
   if (element.isSelfClosing || context.options.isVoidTag(element.tag)) {
     // #4030 self-closing <pre> tag
+    // QUESTION: 为什么selfClose元素，这两项值要设置成false，提升性能？
     if (isPreBoundary) {
       context.inPre = false
     }
@@ -440,6 +441,7 @@ function parseElement(
   ancestors.push(element)
   const mode = context.options.getTextMode(element, parent)
   const children = parseChildren(context, mode, ancestors)
+  
   ancestors.pop()
 
   // 2.x inline-template compat
@@ -481,6 +483,8 @@ function parseElement(
 
   element.loc = getSelection(context, element.loc.start)
 
+
+  // QUESTION: 这里为什么又设置一遍
   if (isPreBoundary) {
     context.inPre = false
   }
@@ -642,6 +646,7 @@ function isComponent(
   context: ParserContext
 ) {
   const options = context.options
+  // QUESTION: 什么用
   if (options.isCustomElement(tag)) {
     return false
   }
@@ -788,10 +793,18 @@ function parseAttribute(
   const loc = getSelection(context, start)
 
   if (!context.inVPre && /^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(name)) {
+    // 指令部分
     const match =
       /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(
         name
       )!
+    // 捕获属性名称中的关键名称部分
+    // v-pre捕获pre
+    // :value捕获value
+    // .ss 捕获ss
+    // @click捕获click
+    // #default捕获default
+    // @click.native捕获native
 
     let isPropShorthand = startsWith(name, '.')
     let dirName =

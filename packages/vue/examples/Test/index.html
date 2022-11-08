@@ -13,13 +13,49 @@
     <div id="app"></div>
     <script>
 
-        const { createApp } = Vue
+        const { createApp, defineComponent, } = Vue
 
-        const app = createApp({
-            template: '<div>{{message}}</div>',
+        const TestForC = defineComponent({
+            template: `<div v-for="item in list" :key="item">{{item}}</div>`,
             data() {
                 return {
-                    message: 'Hello Vue!'
+                    list: [1, 2, 3]
+                }
+            },
+            mounted() {
+                console.log('testfor c mounted');
+            }
+        })
+
+        const app = createApp({
+            components: [TestForC],
+            template: `
+            <div @[eventName]="handleCLick">{{message}}</div>
+            <template v-if="true">33</template>
+            <div class="slkd laksjd \n lfksd">
+                <div v-for="n in 9" :key="n">
+                    <span>{{n}}</span>
+                </div>
+                <div>123</div>
+            </div>
+            <input :value.sync="message" @change="message = $event" />
+            <TestForC :is="'div'"></TestForC>
+            `,
+            mounted() {
+                // console.log('mounted');
+            },
+            beforeDestroy() {
+                console.log('beforeDestroy');
+            },
+            data() {
+                return {
+                    message: 'Hello Vue!',
+                    eventName: 'click',
+                }
+            },
+            methods: {
+                handleCLick() {
+                    console.log('handleCLick')
                 }
             }
         }).mount('#app')

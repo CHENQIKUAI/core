@@ -232,6 +232,7 @@ export function advancePositionWithMutation(
     }
   }
 
+  // QUESTION:offset line column这些数据的用处是什么？
   pos.offset += numberOfCharacters
   pos.line += linesCount
   pos.column =

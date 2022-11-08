@@ -12,6 +12,7 @@ if (__DEV__) {
 }
 
 const compileCache: Record<string, RenderFunction> = Object.create(null)
+// 存储渲染函数的一个对象，cache，缓存？
 
 function compileToFunction(
   template: string | HTMLElement,
@@ -26,13 +27,13 @@ function compileToFunction(
     }
   }
 
-  const key = template
+  const key = template // key是template字符串
   const cached = compileCache[key]
   if (cached) {
     return cached
   }
 
-  if (template[0] === '#') {
+  if (template[0] === '#') { // 第一个字符串是#，是什么特殊情况？template是类的名称？
     const el = document.querySelector(template)
     if (__DEV__ && !el) {
       warn(`Template element not found or is empty: ${template}`)
