@@ -7,9 +7,15 @@ import * as runtimeDom from '@vue/runtime-dom'
 import { isString, NOOP, generateCodeFrame, extend } from '@vue/shared'
 import { InternalRenderFunction } from 'packages/runtime-core/src/component'
 
+import parseTemplate from "../../../cqkPackages/compiler-core/src/parse";
+
+parseTemplate();
+
 if (__DEV__) {
   initDev()
 }
+
+
 
 const compileCache: Record<string, RenderFunction> = Object.create(null)
 // 存储渲染函数的一个对象，cache，缓存？
