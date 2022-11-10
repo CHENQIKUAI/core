@@ -53,6 +53,7 @@ export const isStaticExp = (p: JSChildNode): p is SimpleExpressionNode =>
 export const isBuiltInType = (tag: string, expected: string): boolean =>
   tag === expected || tag === hyphenate(expected)
 
+// 核心组件，Vue内置
 export function isCoreComponent(tag: string): symbol | void {
   if (isBuiltInType(tag, 'Teleport')) {
     return TELEPORT

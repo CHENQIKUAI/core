@@ -237,6 +237,7 @@ function createCodegenNodeForBranch(
       ])
     ) as IfConditionalExpression
   } else {
+    // 这里是v-else无条件的处理情况
     return createChildrenCodegenNode(branch, keyIndex, context)
   }
 }
@@ -256,15 +257,20 @@ function createChildrenCodegenNode(
       ConstantTypes.CAN_HOIST
     )
   )
+  console.log(branch, 'show branch');
   const { children } = branch
   const firstChild = children[0]
   const needFragmentWrapper =
     children.length !== 1 || firstChild.type !== NodeTypes.ELEMENT
+  console.log(needFragmentWrapper, 'show needFragmentWrapper');
+  console.log(firstChild, 'show firstChild');
+  
   if (needFragmentWrapper) {
     if (children.length === 1 && firstChild.type === NodeTypes.FOR) {
       // optimize away nested fragments when child is a ForNode
       const vnodeCall = firstChild.codegenNode!
       injectProp(vnodeCall, keyProperty, context)
+      console.log(firstChild.type === NodeTypes.FOR, 'for ?');
       return vnodeCall
     } else {
       let patchFlag = PatchFlags.STABLE_FRAGMENT

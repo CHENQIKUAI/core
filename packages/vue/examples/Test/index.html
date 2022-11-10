@@ -12,7 +12,6 @@
 <body>
     <div id="app"></div>
     <script>
-
         const { createApp, defineComponent, } = Vue
 
         const TestForC = defineComponent({
@@ -30,8 +29,13 @@
         const app = createApp({
             components: [TestForC],
             template: `
-            <el-input v-model="searchStr" size="small" placeholder="输入供应商名称" :maxLength="10" />
-            <!-- <el-button size="small" type="primary" @click="doAdd">新增任务</el-button> -->
+            <div placeholder="1" v-if="true" key="1">
+                <div>first</div>
+                <li>second</li>
+                <span>third</span>
+            </div>
+            <div placeholder="1" v-else key="1.1">1.1</div>
+            <div>last one</div>
             `,
             mounted() {
                 // console.log('mounted');

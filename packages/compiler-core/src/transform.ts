@@ -316,6 +316,8 @@ export function createTransformContext(
 
 export function transform(root: RootNode, options: TransformOptions) {
   const context = createTransformContext(root, options)
+  console.log(context);
+  
   traverseNode(root, context)
   if (options.hoistStatic) {
     hoistStatic(root, context)

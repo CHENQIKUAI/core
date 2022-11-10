@@ -654,6 +654,7 @@ function isComponent(
 ) {
   const options = context.options
   // QUESTION: 什么用
+  // 自定义元素和Vue无关
   if (options.isCustomElement(tag)) {
     return false
   }
