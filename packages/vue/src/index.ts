@@ -7,15 +7,12 @@ import * as runtimeDom from '@vue/runtime-dom'
 import { isString, NOOP, generateCodeFrame, extend } from '@vue/shared'
 import { InternalRenderFunction } from 'packages/runtime-core/src/component'
 
-import parseTemplate from "../../../cqkPackages/compiler-core/src/parse";
+import '../../../sillyCopy/compiler-core/src/parse';
 
-parseTemplate();
 
 if (__DEV__) {
   initDev()
 }
-
-
 
 const compileCache: Record<string, RenderFunction> = Object.create(null)
 // 存储渲染函数的一个对象，cache，缓存？
@@ -39,7 +36,8 @@ function compileToFunction(
     return cached
   }
 
-  if (template[0] === '#') { // 第一个字符串是#，是什么特殊情况？template是类的名称？
+  if (template[0] === '#') {
+    // 第一个字符串是#，是什么特殊情况？template是类的名称？
     const el = document.querySelector(template)
     if (__DEV__ && !el) {
       warn(`Template element not found or is empty: ${template}`)

@@ -30,15 +30,8 @@
         const app = createApp({
             components: [TestForC],
             template: `
-            <div @[eventName]="handleCLick">{{message}}</div>
-            <template v-if="true">33</template>
-            <div class="slkd laksjd \n lfksd">
-                <div v-for="n in 9" :key="n">
-                    <span>{{n}}</span>
-                </div>
-                <div>123</div>
-            </div>
-            <input :value.sync="message" @change="message = $event" />
+            <el-input v-model="searchStr" size="small" placeholder="输入供应商名称" :maxLength="10" />
+            <!-- <el-button size="small" type="primary" @click="doAdd">新增任务</el-button> -->
             `,
             mounted() {
                 // console.log('mounted');

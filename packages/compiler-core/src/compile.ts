@@ -83,6 +83,7 @@ export function baseCompile(
   }
 
   const ast = isString(template) ? baseParse(template, options) : template
+  console.log(JSON.parse(JSON.stringify(ast)));
   const [nodeTransforms, directiveTransforms] =
     getBaseTransformPreset(prefixIdentifiers)
 
