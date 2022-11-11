@@ -43,6 +43,7 @@ export const transformIf = createStructuralDirectiveTransform(
   /^(if|else|else-if)$/,
   (node, dir, context) => {
     return processIf(node, dir, context, (ifNode, branch, isRoot) => {
+      // 处理代码生成
       // #1587: We need to dynamically increment the key based on the current
       // node's sibling nodes, since chained v-if/else branches are
       // rendered at the same depth
@@ -80,6 +81,7 @@ export const transformIf = createStructuralDirectiveTransform(
 )
 
 // target-agnostic transform used for both Client and SSR
+// 处理if
 export function processIf(
   node: ElementNode,
   dir: DirectiveNode,
@@ -226,6 +228,7 @@ function createCodegenNodeForBranch(
   context: TransformContext
 ): IfConditionalExpression | BlockCodegenNode | MemoExpression {
   if (branch.condition) {
+    // 具体条件
     return createConditionalExpression(
       branch.condition,
       createChildrenCodegenNode(branch, keyIndex, context),
@@ -257,20 +260,16 @@ function createChildrenCodegenNode(
       ConstantTypes.CAN_HOIST
     )
   )
-  console.log(branch, 'show branch');
   const { children } = branch
   const firstChild = children[0]
   const needFragmentWrapper =
     children.length !== 1 || firstChild.type !== NodeTypes.ELEMENT
-  console.log(needFragmentWrapper, 'show needFragmentWrapper');
-  console.log(firstChild, 'show firstChild');
   
   if (needFragmentWrapper) {
     if (children.length === 1 && firstChild.type === NodeTypes.FOR) {
       // optimize away nested fragments when child is a ForNode
       const vnodeCall = firstChild.codegenNode!
       injectProp(vnodeCall, keyProperty, context)
-      console.log(firstChild.type === NodeTypes.FOR, 'for ?');
       return vnodeCall
     } else {
       let patchFlag = PatchFlags.STABLE_FRAGMENT
@@ -305,6 +304,7 @@ function createChildrenCodegenNode(
       | BlockCodegenNode
       | MemoExpression
     const vnodeCall = getMemoedVNodeCall(ret)
+    
     // Change createVNode to createBlock.
     if (vnodeCall.type === NodeTypes.VNODE_CALL) {
       makeBlock(vnodeCall, context)

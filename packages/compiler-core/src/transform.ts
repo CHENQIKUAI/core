@@ -470,6 +470,7 @@ export function traverseNode(
   }
 }
 
+// 若有指定的指令（有vslot的template元素不处理），则 生成 用结构化指令转换器转换的函数。返回这些函数
 export function createStructuralDirectiveTransform(
   name: string | RegExp,
   fn: StructuralDirectiveTransform
