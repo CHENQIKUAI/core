@@ -314,9 +314,9 @@ export function createTransformContext(
   return context
 }
 
+// QUESTION：转换的作用是什么？
 export function transform(root: RootNode, options: TransformOptions) {
   const context = createTransformContext(root, options)
-  console.log(context);
   
   traverseNode(root, context)
   if (options.hoistStatic) {

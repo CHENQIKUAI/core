@@ -1,3 +1,4 @@
+import { deepCopy } from 'deep-copy-ts'
 import {
   createStructuralDirectiveTransform,
   TransformContext,
@@ -48,10 +49,16 @@ export const transformIf = createStructuralDirectiveTransform(
       // node's sibling nodes, since chained v-if/else branches are
       // rendered at the same depth
       const siblings = context.parent!.children
+      // 获取当前Node在兄弟中的位置
       let i = siblings.indexOf(ifNode)
       let key = 0
+
+      // console.log(deepCopy(siblings), i);
+
       while (i-- >= 0) {
         const sibling = siblings[i]
+        // NodeTypes.IF 可参考IfNode类型
+        // 如果前面的兄弟有NodeTypes.IF类型的，key就加上 咱兄弟几人的总人数
         if (sibling && sibling.type === NodeTypes.IF) {
           key += sibling.branches.length
         }
@@ -120,11 +127,13 @@ export function processIf(
       loc: node.loc,
       branches: [branch]
     }
+    // 替换当前node
     context.replaceNode(ifNode)
     if (processCodegen) {
       return processCodegen(ifNode, branch, true)
     }
   } else {
+    // 处理v-else 和 v-else-if 的情况
     // locate the adjacent v-if
     const siblings = context.parent!.children
     const comments = []
@@ -137,6 +146,8 @@ export function processIf(
         continue
       }
 
+      // 如果前面的兄弟中，有兄弟类型是NodeTypes.TEXT，且内容trim后是空，就移除。
+      // 不会吧？什么情况会走到这里来呢？ 内容trim是空的node，早在parse里就应该被正则过滤了呀？
       if (
         sibling &&
         sibling.type === NodeTypes.TEXT &&
@@ -264,7 +275,7 @@ function createChildrenCodegenNode(
   const firstChild = children[0]
   const needFragmentWrapper =
     children.length !== 1 || firstChild.type !== NodeTypes.ELEMENT
-  
+
   if (needFragmentWrapper) {
     if (children.length === 1 && firstChild.type === NodeTypes.FOR) {
       // optimize away nested fragments when child is a ForNode
@@ -304,7 +315,7 @@ function createChildrenCodegenNode(
       | BlockCodegenNode
       | MemoExpression
     const vnodeCall = getMemoedVNodeCall(ret)
-    
+
     // Change createVNode to createBlock.
     if (vnodeCall.type === NodeTypes.VNODE_CALL) {
       makeBlock(vnodeCall, context)

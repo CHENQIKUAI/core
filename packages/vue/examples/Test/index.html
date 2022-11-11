@@ -29,13 +29,14 @@
         const app = createApp({
             components: [TestForC],
             template: `
-            <div placeholder="1" v-if="true" key="1">
+
+            <div v-if="1 > 0" key="1">
                 <div>first</div>
                 <li>second</li>
                 <span>third</span>
             </div>
-            <div placeholder="1" v-else key="1.1">1.1</div>
-            <div>last one</div>
+            <div v-if="2 == 0" key="2">2</div>
+            <div>3333</div>
             `,
             mounted() {
                 // console.log('mounted');

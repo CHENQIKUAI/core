@@ -18,6 +18,7 @@ import { transformModel } from './transforms/vModel'
 import { transformFilter } from './compat/transformFilter'
 import { defaultOnError, createCompilerError, ErrorCodes } from './errors'
 import { transformMemo } from './transforms/vMemo'
+import { deepCopy } from 'deep-copy-ts'
 
 export type TransformPreset = [
   NodeTransform[],
@@ -94,6 +95,8 @@ export function baseCompile(
     }
   }
 
+  console.log(deepCopy(ast), 'ast')
+
   transform(
     ast,
     extend({}, options, {
@@ -110,8 +113,7 @@ export function baseCompile(
     })
   )
 
-  console.log(ast, 'ast');
-  
+  console.log(deepCopy(ast), 'ast after transformed')
 
   return generate(
     ast,

@@ -98,5 +98,8 @@
     "vite": "^3.0.0",
     "vue": "workspace:*",
     "yorkie": "^2.0.0"
+  },
+  "dependencies": {
+    "deep-copy-ts": "^0.5.4"
   }
 }
