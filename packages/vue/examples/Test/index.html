@@ -29,13 +29,16 @@
         const app = createApp({
             components: [TestForC],
             template: `
-
-            <div v-if="1 > 0" key="1">
+            <div v-if="1 > 0" key="1" v-for="n in 3">
                 <div>first</div>
                 <li>second</li>
                 <span>third</span>
             </div>
-            <div v-if="2 == 0" key="2">2</div>
+            <div v-else-if="false">3333</div>
+            <div v-else>444</div>
+            <div v-if="2 == 0">2</div>
+            <div v-if="2 == 0">2</div>
+            <div v-if="2 == 0">2</div>
             <div>3333</div>
             `,
             mounted() {

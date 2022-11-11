@@ -315,9 +315,10 @@ export function createTransformContext(
 }
 
 // QUESTION：转换的作用是什么？
+// vIf：检查语法错误、将v-if v-else-if v-else归类
 export function transform(root: RootNode, options: TransformOptions) {
   const context = createTransformContext(root, options)
-  
+
   traverseNode(root, context)
   if (options.hoistStatic) {
     hoistStatic(root, context)

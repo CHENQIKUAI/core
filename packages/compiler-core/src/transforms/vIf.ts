@@ -53,8 +53,6 @@ export const transformIf = createStructuralDirectiveTransform(
       let i = siblings.indexOf(ifNode)
       let key = 0
 
-      // console.log(deepCopy(siblings), i);
-
       while (i-- >= 0) {
         const sibling = siblings[i]
         // NodeTypes.IF 可参考IfNode类型
@@ -63,6 +61,8 @@ export const transformIf = createStructuralDirectiveTransform(
           key += sibling.branches.length
         }
       }
+
+      //  key是 前面的 NodeTypes.IF 们的 branches的数量之和。
 
       // Exit callback. Complete the codegenNode when all children have been
       // transformed.
@@ -261,7 +261,10 @@ function createChildrenCodegenNode(
   keyIndex: number,
   context: TransformContext
 ): BlockCodegenNode | MemoExpression {
+  console.log(deepCopy(branch), keyIndex, 'show branch')
+
   const { helper } = context
+  // keyProperty的作用是什么？
   const keyProperty = createObjectProperty(
     `key`,
     createSimpleExpression(
@@ -271,10 +274,13 @@ function createChildrenCodegenNode(
       ConstantTypes.CAN_HOIST
     )
   )
+
   const { children } = branch
   const firstChild = children[0]
   const needFragmentWrapper =
     children.length !== 1 || firstChild.type !== NodeTypes.ELEMENT
+
+  console.log(needFragmentWrapper, 'show needFragmentWrapper')
 
   if (needFragmentWrapper) {
     if (children.length === 1 && firstChild.type === NodeTypes.FOR) {
@@ -315,6 +321,9 @@ function createChildrenCodegenNode(
       | BlockCodegenNode
       | MemoExpression
     const vnodeCall = getMemoedVNodeCall(ret)
+
+    console.log(deepCopy(vnodeCall), 'show vnodeCall');
+    
 
     // Change createVNode to createBlock.
     if (vnodeCall.type === NodeTypes.VNODE_CALL) {
