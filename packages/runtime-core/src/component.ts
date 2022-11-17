@@ -935,7 +935,7 @@ export function createSetupContext(
 }
 
 export function getExposeProxy(instance: ComponentInternalInstance) {
-  if (instance.exposed) {
+  if (instance && instance.exposed) {
     return (
       instance.exposeProxy ||
       (instance.exposeProxy = new Proxy(proxyRefs(markRaw(instance.exposed)), {

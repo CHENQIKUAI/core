@@ -95,8 +95,6 @@ export function baseCompile(
     }
   }
 
-  console.log(deepCopy(ast), 'ast')
-
   transform(
     ast,
     extend({}, options, {
@@ -112,8 +110,6 @@ export function baseCompile(
       )
     })
   )
-
-  console.log(deepCopy(ast), 'ast after transformed')
 
   return generate(
     ast,

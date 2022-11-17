@@ -261,7 +261,6 @@ function createChildrenCodegenNode(
   keyIndex: number,
   context: TransformContext
 ): BlockCodegenNode | MemoExpression {
-  console.log(deepCopy(branch), keyIndex, 'show branch')
 
   const { helper } = context
   // keyProperty的作用是什么？
@@ -279,8 +278,6 @@ function createChildrenCodegenNode(
   const firstChild = children[0]
   const needFragmentWrapper =
     children.length !== 1 || firstChild.type !== NodeTypes.ELEMENT
-
-  console.log(needFragmentWrapper, 'show needFragmentWrapper')
 
   if (needFragmentWrapper) {
     if (children.length === 1 && firstChild.type === NodeTypes.FOR) {
@@ -322,8 +319,6 @@ function createChildrenCodegenNode(
       | MemoExpression
     const vnodeCall = getMemoedVNodeCall(ret)
 
-    console.log(deepCopy(vnodeCall), 'show vnodeCall');
-    
 
     // Change createVNode to createBlock.
     if (vnodeCall.type === NodeTypes.VNODE_CALL) {

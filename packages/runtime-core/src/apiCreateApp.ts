@@ -27,6 +27,7 @@ import { version } from '.'
 import { installAppCompatProperties } from './compat/global'
 import { NormalizedPropsOptions } from './componentProps'
 import { ObjectEmitsOptions } from './componentEmits'
+import { deepCopy } from 'deep-copy-ts'
 
 export interface App<HostElement = any> {
   version: string
@@ -186,6 +187,8 @@ export function createAppAPI<HostElement>(
       rootComponent = { ...rootComponent }
     }
 
+    console.log(deepCopy(rootComponent), 'show rootComponent')
+
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
@@ -324,8 +327,12 @@ export function createAppAPI<HostElement>(
             app._instance = vnode.component
             devtoolsInitApp(app, version)
           }
-
-          return getExposeProxy(vnode.component!) || vnode.component!.proxy
+          console.log(vnode, 'show vnode')
+          
+          return (
+            getExposeProxy(vnode.component!) ||
+            (vnode.component && vnode.component!.proxy)
+          )
         } else if (__DEV__) {
           warn(
             `App has already been mounted.\n` +

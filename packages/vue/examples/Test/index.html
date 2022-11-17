@@ -14,31 +14,26 @@
     <script>
         const { createApp, defineComponent, } = Vue
 
-        const TestForC = defineComponent({
-            template: `<div v-for="item in list" :key="item">{{item}}</div>`,
-            data() {
-                return {
-                    list: [1, 2, 3]
-                }
-            },
-            mounted() {
-                console.log('testfor c mounted');
-            }
-        })
+        // const TestForC = defineComponent({
+        //     template: `<div v-for="item in list" :key="item">{{item}}</div>`,
+        //     data() {
+        //         return {
+        //             list: [1, 2, 3]
+        //         }
+        //     },
+        //     mounted() {
+        //         console.log('testfor c mounted');
+        //     }
+        // })
 
         const app = createApp({
-            components: [TestForC],
+            components: [],
             template: `
-            <div v-if="1 > 0" key="1" v-for="n in 3">
+            <div key="i" v-for="(item111, index222, haha333) in list">
                 <div>first</div>
                 <li>second</li>
                 <span>third</span>
             </div>
-            <div v-else-if="false">3333</div>
-            <div v-else>444</div>
-            <div v-if="2 == 0">2</div>
-            <div v-if="2 == 0">2</div>
-            <div v-if="2 == 0">2</div>
             <div>3333</div>
             `,
             mounted() {
@@ -51,6 +46,7 @@
                 return {
                     message: 'Hello Vue!',
                     eventName: 'click',
+                    list: [{ id: 1, name: 'nzz' }, { id: 2, name: 'ryy' }, { id: 3, name: 'lhc' }]
                 }
             },
             methods: {

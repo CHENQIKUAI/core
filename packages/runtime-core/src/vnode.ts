@@ -45,6 +45,7 @@ import { convertLegacyVModelProps } from './compat/componentVModel'
 import { defineLegacyVNodeProperties } from './compat/renderFn'
 import { callWithAsyncErrorHandling, ErrorCodes } from './errorHandling'
 import { ComponentPublicInstance } from './componentPublicInstance'
+import { deepCopy } from 'deep-copy-ts'
 
 export const Fragment = Symbol(__DEV__ ? 'Fragment' : undefined) as any as {
   __isFragment: true

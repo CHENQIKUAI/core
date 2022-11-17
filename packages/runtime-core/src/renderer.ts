@@ -72,6 +72,7 @@ import { initFeatureFlags } from './featureFlags'
 import { isAsyncWrapper } from './apiAsyncComponent'
 import { isCompatEnabled } from './compat/compatConfig'
 import { DeprecationTypes } from './compat/compatConfig'
+import { deepCopy as copy } from '../../../sillyCopy/copy/index'
 
 export interface Renderer<HostElement = RendererElement> {
   render: RootRenderFunction<HostElement>
@@ -406,6 +407,14 @@ function baseCreateRenderer(
         )
         break
       default:
+        console.log({
+          type: type,
+          element: shapeFlag & ShapeFlags.ELEMENT,
+          component: shapeFlag & ShapeFlags.COMPONENT,
+          teleport: shapeFlag & ShapeFlags.TELEPORT,
+          suspense: __FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE,
+          __DEV__
+        })
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElement(
             n1,
@@ -1195,6 +1204,9 @@ function baseCreateRenderer(
         parentComponent,
         parentSuspense
       ))
+
+      
+    console.log(copy(instance), 'show instance')
 
     if (__DEV__ && instance.type.__hmrId) {
       registerHMR(instance)
