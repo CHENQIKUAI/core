@@ -27,7 +27,7 @@ import { version } from '.'
 import { installAppCompatProperties } from './compat/global'
 import { NormalizedPropsOptions } from './componentProps'
 import { ObjectEmitsOptions } from './componentEmits'
-import { deepCopy } from 'deep-copy-ts'
+import { deepCopy } from '../../../sillyCopy/copy/index'
 
 export interface App<HostElement = any> {
   version: string
@@ -187,8 +187,6 @@ export function createAppAPI<HostElement>(
       rootComponent = { ...rootComponent }
     }
 
-    console.log(deepCopy(rootComponent), 'show rootComponent')
-
     if (rootProps != null && !isObject(rootProps)) {
       __DEV__ && warn(`root props passed to app.mount() must be an object.`)
       rootProps = null
@@ -298,10 +296,21 @@ export function createAppAPI<HostElement>(
                 ` you need to unmount the previous app by calling \`app.unmount()\` first.`
             )
           }
+          // 此时 render方法还没有创建
+          console.log(
+            deepCopy(rootComponent),
+            deepCopy(rootProps),
+            'rootComponent, rootProps'
+          );
+
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
           )
+
+          // vnode.type 即 rootComponent 此时也还没有render方法。
+          // console.log(deepCopy(vnode), 'show vnode');
+          
           // store app context on the root VNode.
           // this will be set on the root instance on initial mount.
           vnode.appContext = context
@@ -317,7 +326,10 @@ export function createAppAPI<HostElement>(
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {
             render(vnode, rootContainer, isSVG)
+            // 设置vnode.type.render成函数
           }
+          // console.log(deepCopy(vnode), 'show vnodea after render');
+          
           isMounted = true
           app._container = rootContainer
           // for devtools and telemetry
@@ -327,8 +339,6 @@ export function createAppAPI<HostElement>(
             app._instance = vnode.component
             devtoolsInitApp(app, version)
           }
-          console.log(vnode, 'show vnode')
-          
           return (
             getExposeProxy(vnode.component!) ||
             (vnode.component && vnode.component!.proxy)

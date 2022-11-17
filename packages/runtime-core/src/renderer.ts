@@ -351,6 +351,7 @@ function baseCreateRenderer(
 
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
+  // 重要的来了
   const patch: PatchFn = (
     n1,
     n2,
@@ -367,18 +368,21 @@ function baseCreateRenderer(
     }
 
     // patching & not same type, unmount old tree
+    // 若n1有值 n1和n2不是同类型
     if (n1 && !isSameVNodeType(n1, n2)) {
       anchor = getNextHostNode(n1)
       unmount(n1, parentComponent, parentSuspense, true)
       n1 = null
     }
 
+    // 若n2 pathFlag 是 BAIL
     if (n2.patchFlag === PatchFlags.BAIL) {
       optimized = false
       n2.dynamicChildren = null
     }
 
     const { type, ref, shapeFlag } = n2
+    console.log(type, 'type')
     switch (type) {
       case Text:
         processText(n1, n2, container, anchor)
@@ -407,14 +411,14 @@ function baseCreateRenderer(
         )
         break
       default:
-        console.log({
-          type: type,
-          element: shapeFlag & ShapeFlags.ELEMENT,
-          component: shapeFlag & ShapeFlags.COMPONENT,
-          teleport: shapeFlag & ShapeFlags.TELEPORT,
-          suspense: __FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE,
-          __DEV__
-        })
+        // console.log({
+        //   type: type,
+        //   element: shapeFlag & ShapeFlags.ELEMENT,
+        //   component: shapeFlag & ShapeFlags.COMPONENT,
+        //   teleport: shapeFlag & ShapeFlags.TELEPORT,
+        //   suspense: __FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE,
+        //   __DEV__
+        // })
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElement(
             n1,
@@ -1147,6 +1151,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 处理组件
   const processComponent = (
     n1: VNode | null,
     n2: VNode,
@@ -1184,6 +1189,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 将组件挂载到container
   const mountComponent: MountComponentFn = (
     initialVNode,
     container,
@@ -1205,7 +1211,6 @@ function baseCreateRenderer(
         parentSuspense
       ))
 
-      
     console.log(copy(instance), 'show instance')
 
     if (__DEV__ && instance.type.__hmrId) {
@@ -1218,6 +1223,7 @@ function baseCreateRenderer(
     }
 
     // inject renderer internals for keepAlive
+    // 是否keepAlive
     if (isKeepAlive(initialVNode)) {
       ;(instance.ctx as KeepAliveContext).renderer = internals
     }
@@ -1297,6 +1303,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 设置renderEffect
   const setupRenderEffect: SetupRenderEffectFn = (
     instance,
     initialVNode,
@@ -2364,6 +2371,7 @@ function baseCreateRenderer(
   }
 }
 
+// QUESTION: 这是干啥 奇奇怪怪
 function toggleRecurse(
   { effect, update }: ComponentInternalInstance,
   allowed: boolean
