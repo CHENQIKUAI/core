@@ -11,11 +11,11 @@ type TrackedMarkers = {
   /**
    * wasTracked
    */
-  w: number
+  w: number // 被追踪数量?
   /**
    * newTracked
    */
-  n: number
+  n: number // 新追踪数量?
 }
 
 export const createDep = (effects?: ReactiveEffect[]): Dep => {

@@ -19,7 +19,7 @@ type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
 // The number of effects currently being tracked recursively.
-let effectTrackDepth = 0
+let effectTrackDepth = 0 // effect被递归地追踪的数量
 
 export let trackOpBit = 1
 
@@ -28,6 +28,7 @@ export let trackOpBit = 1
  * This value is chosen to enable modern JS engines to use a SMI on all platforms.
  * When recursion depth is greater, fall back to using a full cleanup.
  */
+// full cleanup是什么？ SMI是什么？
 const maxMarkerBits = 30
 
 export type EffectScheduler = (...args: any[]) => any
@@ -51,66 +52,66 @@ export const ITERATE_KEY = Symbol(__DEV__ ? 'iterate' : '')
 export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
 
 export class ReactiveEffect<T = any> {
-  active = true
-  deps: Dep[] = []
-  parent: ReactiveEffect | undefined = undefined
+  active = true // 激活状态
+  deps: Dep[] = []  // 依赖数组
+  parent: ReactiveEffect | undefined = undefined // 父?
 
   /**
    * Can be attached after creation
    * @internal
    */
-  computed?: ComputedRefImpl<T>
+  computed?: ComputedRefImpl<T> // 被计算
   /**
    * @internal
    */
-  allowRecurse?: boolean
+  allowRecurse?: boolean // 允许递归?
   /**
    * @internal
    */
-  private deferStop?: boolean
+  private deferStop?: boolean // 延迟停止
 
-  onStop?: () => void
+  onStop?: () => void // 停止?
   // dev only
-  onTrack?: (event: DebuggerEvent) => void
+  onTrack?: (event: DebuggerEvent) => void // 追踪?
   // dev only
-  onTrigger?: (event: DebuggerEvent) => void
+  onTrigger?: (event: DebuggerEvent) => void // 触发?
 
   constructor(
-    public fn: () => T,
-    public scheduler: EffectScheduler | null = null,
-    scope?: EffectScope
+    public fn: () => T, // 一个函数
+    public scheduler: EffectScheduler | null = null, // effect计时器
+    scope?: EffectScope // effect范围?
   ) {
-    recordEffectScope(this, scope)
+    recordEffectScope(this, scope) // 记录effect范围?
   }
 
   run() {
-    if (!this.active) {
-      return this.fn()
+    if (!this.active) { // 若非激活
+      return this.fn() // 执行fn
     }
     let parent: ReactiveEffect | undefined = activeEffect
     let lastShouldTrack = shouldTrack
-    while (parent) {
+    while (parent) { // 顺着activeEffect向上查找祖宗, 直到找到自己
       if (parent === this) {
         return
       }
       parent = parent.parent
     }
     try {
-      this.parent = activeEffect
-      activeEffect = this
-      shouldTrack = true
+      this.parent = activeEffect // 保存激活effect到parent
+      activeEffect = this // 更新激活effect为当前实例对象
+      shouldTrack = true // ?
 
       trackOpBit = 1 << ++effectTrackDepth
 
-      if (effectTrackDepth <= maxMarkerBits) {
-        initDepMarkers(this)
+      if (effectTrackDepth <= maxMarkerBits) { // 若effects被递归追踪的数量 不大于 maxMarkerBits
+        initDepMarkers(this) // 对deps中的元素的w属性做修改
       } else {
-        cleanupEffect(this)
+        cleanupEffect(this) // deps中的dep是一个set，set中删除当前effect 然后清空deps
       }
       return this.fn()
     } finally {
       if (effectTrackDepth <= maxMarkerBits) {
-        finalizeDepMarkers(this)
+        finalizeDepMarkers(this) // 删除掉被追踪且没有新被追踪的；
       }
 
       trackOpBit = 1 << --effectTrackDepth

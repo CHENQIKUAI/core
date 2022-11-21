@@ -107,11 +107,12 @@ export function effectScope(detached?: boolean) {
   return new EffectScope(detached)
 }
 
+// 记录effect范围?
 export function recordEffectScope(
   effect: ReactiveEffect,
   scope: EffectScope | undefined = activeEffectScope
 ) {
-  if (scope && scope.active) {
+  if (scope && scope.active) { // 若scope是active的, 那么把effect推入scope.effects中
     scope.effects.push(effect)
   }
 }
