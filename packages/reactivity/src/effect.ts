@@ -21,7 +21,7 @@ const targetMap = new WeakMap<any, KeyToDepMap>()
 // The number of effects currently being tracked recursively.
 let effectTrackDepth = 0 // effect被递归地追踪的数量
 
-export let trackOpBit = 1
+export let trackOpBit = 1 // 追踪Op比特
 
 /**
  * The bitwise track markers support at most 30 levels of recursion.
@@ -257,6 +257,7 @@ export function trackEffects(
   }
 }
 
+// 触发 
 export function trigger(
   target: object,
   type: TriggerOpTypes,

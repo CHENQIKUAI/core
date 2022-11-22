@@ -49,7 +49,7 @@ export const finalizeDepMarkers = (effect: ReactiveEffect) => {
         deps[ptr++] = dep
       }
       // clear bits
-      dep.w &= ~trackOpBit
+      dep.w &= ~trackOpBit // 左侧 和 右侧的反码 做 按位与运算 . 若trackOpBit某位置上是0,那么dep.w对应位置上的值保留。否则，设置为0.
       dep.n &= ~trackOpBit
     }
     deps.length = ptr
