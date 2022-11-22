@@ -179,8 +179,10 @@ function createSetter(shallow = false) {
     // don't trigger if target is something up in the prototype chain of original
     if (target === toRaw(receiver)) {
       if (!hadKey) {
+        // 派发通知
         trigger(target, TriggerOpTypes.ADD, key, value)
       } else if (hasChanged(value, oldValue)) {
+        // 派发通知
         trigger(target, TriggerOpTypes.SET, key, value, oldValue)
       }
     }

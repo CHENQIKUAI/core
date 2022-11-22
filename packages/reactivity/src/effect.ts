@@ -46,11 +46,12 @@ export type DebuggerEventExtraInfo = {
   oldTarget?: Map<any, any> | Set<any>
 }
 
-export let activeEffect: ReactiveEffect | undefined
+export let activeEffect: ReactiveEffect | undefined // activeEffect 激活状态的副作用？什么用 QUESTION
 
 export const ITERATE_KEY = Symbol(__DEV__ ? 'iterate' : '')
 export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
 
+// 副作用函数
 export class ReactiveEffect<T = any> {
   active = true // 激活状态
   deps: Dep[] = []  // 依赖数组
@@ -211,6 +212,8 @@ export function resetTracking() {
   shouldTrack = last === undefined ? true : last
 }
 
+// 收集依赖
+// 因此每次执行 track 函数，就是把当前激活的副作用函数 activeEffect 作为依赖，然后收集到 target 相关的 depsMap 对应 key 下的依赖集合 dep 中
 export function track(target: object, type: TrackOpTypes, key: unknown) {
   if (shouldTrack && activeEffect) {
     let depsMap = targetMap.get(target)
@@ -246,7 +249,9 @@ export function trackEffects(
   }
 
   if (shouldTrack) {
+    // 收集当前激活的 effect 作为依赖
     dep.add(activeEffect!)
+    // 当前激活的 effect 收集 dep 集合作为依赖
     activeEffect!.deps.push(dep)
     if (__DEV__ && activeEffect!.onTrack) {
       activeEffect!.onTrack({
@@ -257,7 +262,7 @@ export function trackEffects(
   }
 }
 
-// 触发 
+// 派发通知
 export function trigger(
   target: object,
   type: TriggerOpTypes,
