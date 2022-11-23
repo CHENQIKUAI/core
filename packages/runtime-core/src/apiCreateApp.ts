@@ -297,11 +297,11 @@ export function createAppAPI<HostElement>(
             )
           }
           // 此时 render方法还没有创建
-          console.log(
-            deepCopy(rootComponent),
-            deepCopy(rootProps),
-            'rootComponent, rootProps'
-          );
+          // console.log(
+          //   deepCopy(rootComponent),
+          //   deepCopy(rootProps),
+          //   'rootComponent, rootProps'
+          // );
 
           const vnode = createVNode(
             rootComponent as ConcreteComponent,

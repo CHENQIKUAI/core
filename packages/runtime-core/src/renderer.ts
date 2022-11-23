@@ -382,7 +382,7 @@ function baseCreateRenderer(
     }
 
     const { type, ref, shapeFlag } = n2
-    console.log(type, 'type')
+    // console.log(type, 'type')
     switch (type) {
       case Text:
         processText(n1, n2, container, anchor)
@@ -1211,7 +1211,7 @@ function baseCreateRenderer(
         parentSuspense
       ))
 
-    console.log(copy(instance), 'show instance')
+    // console.log(copy(instance), 'show instance')
 
     if (__DEV__ && instance.type.__hmrId) {
       registerHMR(instance)

@@ -121,6 +121,7 @@ function createGetter(isReadonly = false, shallow = false) {
     }
 
     if (!isReadonly) {
+      console.log('track');
       track(target, TrackOpTypes.GET, key)
     }
 
@@ -178,6 +179,7 @@ function createSetter(shallow = false) {
     const result = Reflect.set(target, key, value, receiver)
     // don't trigger if target is something up in the prototype chain of original
     if (target === toRaw(receiver)) {
+      console.log('trigger')
       if (!hadKey) {
         // 派发通知
         trigger(target, TriggerOpTypes.ADD, key, value)

@@ -250,6 +250,8 @@ export function trackEffects(
 
   if (shouldTrack) {
     // 收集当前激活的 effect 作为依赖
+    // console.log(activeEffect, 'show activeEffect');
+    
     dep.add(activeEffect!)
     // 当前激活的 effect 收集 dep 集合作为依赖
     activeEffect!.deps.push(dep)
@@ -384,3 +386,20 @@ function triggerEffect(
     }
   }
 }
+
+
+/**
+ * Vue3数据双向绑定的原理
+ * 
+ * track收集依赖，收集激活的effect到targetMap中对应对象的某个属性的effect集合中。
+ * trigger将targetMap中对应对象的某个属性的的effect集合全部执行。
+ * effect函数，用传入的fn函数创建一个函数，将函数赋值给激活的effect。并且执行它。
+ * 
+ * reactive中，代理对象，setter，调用trigger。getter调用track。
+ * 
+ * 创建一个打印函数A，打印对象的某个属性attr。
+ * 函数A传入effect函数。执行时，函数A被创建成函数effect A，保存到激活effect中且执行。
+ * A的执行会访问属性attr，这被getter劫持，会调用track。track收集当前激活的effect，即函数effectA。
+ * 
+ * 当修改对象attr时，被setter劫持，调用trigger方法，会执行target对应对象的属性的effect集合中的effect函数。
+ */
