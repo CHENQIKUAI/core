@@ -121,7 +121,6 @@ function createGetter(isReadonly = false, shallow = false) {
     }
 
     if (!isReadonly) {
-      console.log('track');
       track(target, TrackOpTypes.GET, key)
     }
 

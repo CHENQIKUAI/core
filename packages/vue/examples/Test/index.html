@@ -26,35 +26,59 @@
         //     }
         // })
 
-        const app = createApp({
-            components: [],
-            template: `
-            <div key="i" v-for="(item111, index222, haha333) in list">
-                <div>first</div>
-                <li>second</li>
-                <span>third</span>
-            </div>
-            <div>3333</div>
-            `,
-            mounted() {
-                // console.log('mounted');
-            },
-            beforeDestroy() {
-                console.log('beforeDestroy');
-            },
-            data() {
-                return {
-                    message: 'Hello Vue!',
-                    eventName: 'click',
-                    list: [{ id: 1, name: 'nzz' }, { id: 2, name: 'ryy' }, { id: 3, name: 'lhc' }]
-                }
-            },
-            methods: {
-                handleCLick() {
-                    console.log('handleCLick')
-                }
-            }
-        }).mount('#app')
+        // const app = createApp({
+        //     components: [],
+        //     template: `
+        //     <div key="i" v-for="(item111, index222, haha333) in list">
+        //         <div>first</div>
+        //         <li>second</li>
+        //         <span>third</span>
+        //     </div>
+        //     <button @click="show = !show">switch message</button>
+        //     <div v-if="show">3333
+        //         {{message}}
+        //     </div>
+        //     `,
+        //     mounted() {
+        //         // console.log('mounted');
+        //     },
+        //     beforeDestroy() {
+        //         console.log('beforeDestroy');
+        //     },
+        //     data() {
+        //         return {
+        //             message: 'Hello Vue!',
+        //             eventName: 'click',
+        //             list: [{ id: 1, name: 'nzz' }, { id: 2, name: 'ryy' }, { id: 3, name: 'lhc' }],
+        //             show: false,
+        //         }
+        //     },
+        //     methods: {
+        //         handleCLick() {
+        //             console.log('handleCLick')
+        //         }
+        //     }
+        // }).mount('#app')
+
+        const { reactive, effect } = Vue;
+        const counter = reactive({
+            num: 0,
+            num2: 0
+        })
+        function logCount() {
+            effect(logCount2222222222)
+            console.log('num:', counter.num)
+        }
+        function count() {
+            counter.num++
+        }
+        function logCount2222222222() {
+            console.log('num2:', counter.num2)
+        }
+
+        effect(logCount);
+
+        count();
 
     </script>
 </body>

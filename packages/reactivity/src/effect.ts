@@ -46,7 +46,7 @@ export type DebuggerEventExtraInfo = {
   oldTarget?: Map<any, any> | Set<any>
 }
 
-export let activeEffect: ReactiveEffect | undefined // activeEffect 激活状态的副作用？什么用 QUESTION
+export let activeEffect: ReactiveEffect | undefined // activeEffect 激活状态的副作用？什么用 保存当前激活的effect。在effect函数调用时，会被设置成一个effect。
 
 export const ITERATE_KEY = Symbol(__DEV__ ? 'iterate' : '')
 export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
@@ -112,7 +112,7 @@ export class ReactiveEffect<T = any> {
       return this.fn()
     } finally {
       if (effectTrackDepth <= maxMarkerBits) {
-        finalizeDepMarkers(this) // 删除掉被追踪且没有新被追踪的；
+        finalizeDepMarkers(this) // 删除曾经被track，但是本次没有被track的。消除initDepMarkers对trackOpBit对n和w的修改
       }
 
       trackOpBit = 1 << --effectTrackDepth
