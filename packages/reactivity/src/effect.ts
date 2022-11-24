@@ -30,6 +30,7 @@ export let trackOpBit = 1 // 追踪Op比特
  */
 // full cleanup是什么？ SMI是什么？
 const maxMarkerBits = 30
+// V8引擎位2^32-2内的运算性能比这个范围之外的更好
 
 export type EffectScheduler = (...args: any[]) => any
 
@@ -46,7 +47,7 @@ export type DebuggerEventExtraInfo = {
   oldTarget?: Map<any, any> | Set<any>
 }
 
-export let activeEffect: ReactiveEffect | undefined // activeEffect 激活状态的副作用？什么用 保存当前激活的effect。在effect函数调用时，会被设置成一个effect。
+export let activeEffect: ReactiveEffect | undefined // activeEffect 保存当前激活的effect。在effect函数调用时，会被设置成一个effect。
 
 export const ITERATE_KEY = Symbol(__DEV__ ? 'iterate' : '')
 export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
@@ -105,14 +106,14 @@ export class ReactiveEffect<T = any> {
       trackOpBit = 1 << ++effectTrackDepth
 
       if (effectTrackDepth <= maxMarkerBits) { // 若effects被递归追踪的数量 不大于 maxMarkerBits
-        initDepMarkers(this) // 对deps中的元素的w属性做修改
+        initDepMarkers(this) // 对deps中的元素的w属性做修改。所deps集合中存在值dep，则给他们w属性上做标记。意在表示他们是之前已经被track的。
       } else {
         cleanupEffect(this) // deps中的dep是一个set，set中删除当前effect 然后清空deps
       }
       return this.fn()
     } finally {
       if (effectTrackDepth <= maxMarkerBits) {
-        finalizeDepMarkers(this) // 删除曾经被track，但是本次没有被track的。消除initDepMarkers对trackOpBit对n和w的修改
+        finalizeDepMarkers(this) // 删除曾经被track，但是本次没有被track的effect。消除initDepMarkers对trackOpBit对n和w的修改。
       }
 
       trackOpBit = 1 << --effectTrackDepth
