@@ -368,8 +368,8 @@ export function injectProp(
   prop: Property,
   context: TransformContext
 ) {
-  console.log(deepCopy(node), 'node');
-  console.log(deepCopy(prop), 'prop');
+  // console.log(deepCopy(node), 'node');
+  // console.log(deepCopy(prop), 'prop');
   
   let propsWithInjection: ObjectExpression | CallExpression | undefined
   /**
@@ -450,8 +450,8 @@ export function injectProp(
       node.arguments[2] = propsWithInjection
     }
   }
-  console.log(node, 'show final node')
-  console.log('\n');
+  // console.log(node, 'show final node')
+  // console.log('\n');
   
 }
 

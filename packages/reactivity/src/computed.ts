@@ -1,4 +1,4 @@
-import { DebuggerOptions, ReactiveEffect } from './effect'
+import { activeEffect, DebuggerOptions, ReactiveEffect } from './effect'
 import { Ref, trackRefValue, triggerRefValue } from './ref'
 import { isFunction, NOOP } from '@vue/shared'
 import { ReactiveFlags, toRaw } from './reactive'
@@ -42,9 +42,10 @@ export class ComputedRefImpl<T> {
     isSSR: boolean
   ) {
     this.effect = new ReactiveEffect(getter, () => {
+      // new ReactiveEffect传入fn和scheduler
       if (!this._dirty) {
         this._dirty = true
-        triggerRefValue(this)
+        triggerRefValue(this) // 触发ComputedRefImpl的dep中的副作用们
       }
     })
     this.effect.computed = this
@@ -53,12 +54,14 @@ export class ComputedRefImpl<T> {
   }
 
   get value() {
+    // console.log(activeEffect, 'show activeEffect in get value')
+    // TODO: activeEffect在什么时间被设置了
     // the computed ref may get wrapped by other proxies e.g. readonly() #3376
     const self = toRaw(this)
-    trackRefValue(self)
+    trackRefValue(self) // 往ComputedRefImpl的dep属性中添加副作用
     if (self._dirty || !self._cacheable) {
       self._dirty = false
-      self._value = self.effect.run()!
+      self._value = self.effect.run()! // 会将self.effect保存到activeEffect
     }
     return self._value
   }

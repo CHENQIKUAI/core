@@ -363,7 +363,7 @@ function doWatch(
     scheduler = () => queueJob(job)
   }
 
-  const effect = new ReactiveEffect(getter, scheduler)
+  const effect = new ReactiveEffect(getter, scheduler) // 当触发副作用时，被执行的是scheduler。
 
   if (__DEV__) {
     effect.onTrack = onTrack
@@ -373,9 +373,10 @@ function doWatch(
   // initial run
   if (cb) {
     if (immediate) {
+      // 立刻执行
       job()
     } else {
-      oldValue = effect.run()
+      oldValue = effect.run() // 这里是执行run，track effect
     }
   } else if (flush === 'post') {
     queuePostRenderEffect(

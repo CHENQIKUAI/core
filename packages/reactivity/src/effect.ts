@@ -55,7 +55,7 @@ export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
 // 副作用函数
 export class ReactiveEffect<T = any> {
   active = true // 激活状态
-  deps: Dep[] = []  // 依赖数组
+  deps: Dep[] = [] // 依赖数组
   parent: ReactiveEffect | undefined = undefined // 父?
 
   /**
@@ -87,12 +87,14 @@ export class ReactiveEffect<T = any> {
   }
 
   run() {
-    if (!this.active) { // 若非激活
+    if (!this.active) {
+      // 若非激活
       return this.fn() // 执行fn
     }
     let parent: ReactiveEffect | undefined = activeEffect
     let lastShouldTrack = shouldTrack
-    while (parent) { // 顺着activeEffect向上查找祖宗, 直到找到自己
+    while (parent) {
+      // 顺着activeEffect向上查找祖宗, 直到找到自己
       if (parent === this) {
         return
       }
@@ -105,7 +107,8 @@ export class ReactiveEffect<T = any> {
 
       trackOpBit = 1 << ++effectTrackDepth
 
-      if (effectTrackDepth <= maxMarkerBits) { // 若effects被递归追踪的数量 不大于 maxMarkerBits
+      if (effectTrackDepth <= maxMarkerBits) {
+        // 若effects被递归追踪的数量 不大于 maxMarkerBits
         initDepMarkers(this) // 对deps中的元素的w属性做修改。所deps集合中存在值dep，则给他们w属性上做标记。意在表示他们是之前已经被track的。
       } else {
         cleanupEffect(this) // deps中的dep是一个set，set中删除当前effect 然后清空deps
@@ -252,7 +255,7 @@ export function trackEffects(
   if (shouldTrack) {
     // 收集当前激活的 effect 作为依赖
     // console.log(activeEffect, 'show activeEffect');
-    
+
     dep.add(activeEffect!)
     // 当前激活的 effect 收集 dep 集合作为依赖
     activeEffect!.deps.push(dep)
@@ -289,6 +292,7 @@ export function trigger(
     const newLength = toNumber(newValue)
     depsMap.forEach((dep, key) => {
       if (key === 'length' || key >= newLength) {
+        // 触发监听索引值大于newLength的值的effect
         deps.push(dep)
       }
     })
@@ -372,6 +376,7 @@ export function triggerEffects(
   }
 }
 
+// 触发副作用，即调用副作用函数
 function triggerEffect(
   effect: ReactiveEffect,
   debuggerEventExtraInfo?: DebuggerEventExtraInfo
@@ -380,6 +385,7 @@ function triggerEffect(
     if (__DEV__ && effect.onTrigger) {
       effect.onTrigger(extend({ effect }, debuggerEventExtraInfo))
     }
+    // 有scheduler就调用scheduler，没有，就调用run。run是new ReactiveEffect时传入的第一个参数，scheduler是传入的第二个参数。
     if (effect.scheduler) {
       effect.scheduler()
     } else {
@@ -388,19 +394,18 @@ function triggerEffect(
   }
 }
 
-
 /**
  * Vue3数据双向绑定的原理
- * 
+ *
  * track收集依赖，收集激活的effect到targetMap中对应对象的某个属性的effect集合中。
  * trigger将targetMap中对应对象的某个属性的的effect集合全部执行。
  * effect函数，用传入的fn函数创建一个函数，将函数赋值给激活的effect。并且执行它。
- * 
- * reactive中，代理对象，setter，调用trigger。getter调用track。
- * 
+ *
+ * reactive中，代理对象，setter函数被执行时，调用trigger。getter函数被执行时调用track。
+ *
  * 创建一个打印函数A，打印对象的某个属性attr。
  * 函数A传入effect函数。执行时，函数A被创建成函数effect A，保存到激活effect中且执行。
  * A的执行会访问属性attr，这被getter劫持，会调用track。track收集当前激活的effect，即函数effectA。
- * 
+ *
  * 当修改对象attr时，被setter劫持，调用trigger方法，会执行target对应对象的属性的effect集合中的effect函数。
  */
