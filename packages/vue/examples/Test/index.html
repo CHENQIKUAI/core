@@ -12,7 +12,23 @@
 <body>
     <div id="app"></div>
     <script>
-        const { createApp, defineComponent, } = Vue
+        const { createApp, defineComponent, computed, watch, ref } = Vue
+
+        const c = ref(1)
+        const unwatch = watch(c, (newValue, oldValue, onCleanup) => {
+            console.log('cb')
+            onCleanup(() => {
+                console.log('this is before unwatch')
+            })
+        })
+        c.value++;
+
+        setTimeout(() => {
+            unwatch();
+            console.log('unwatch')
+        })
+
+
 
         const TestForC = defineComponent({
             template: `<div v-for="item in list" :key="item">{{item}}</div>`,
@@ -65,6 +81,8 @@
                 }
             }
         }).mount('#app')
+
+
 
 
     </script>

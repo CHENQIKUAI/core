@@ -157,6 +157,11 @@ export function watch<
 ): WatchStopHandle
 
 // implementation
+// 思路:监听source的变化，若变了则调用cb。
+// 思路实现：
+// 用source和cb构造数据，创建reactiveEffect。设置activeEffect为reactiveEffect。
+// 访问source中指定的响应式数据。让响应式数据被收集到reactiveEffect.deps中。
+// 当响应式数据更新时，会triggerEffect，会找到reactiveEffect，调用cb。
 export function watch<T = any, Immediate extends Readonly<boolean> = false>(
   source: T | WatchSource<T>,
   cb: any,
@@ -206,6 +211,7 @@ function doWatch(
   let forceTrigger = false
   let isMultiSource = false
 
+  // 给getter赋值
   if (isRef(source)) {
     getter = () => source.value
     forceTrigger = isShallow(source)
@@ -307,13 +313,15 @@ function doWatch(
   let oldValue: any = isMultiSource
     ? new Array((source as []).length).fill(INITIAL_WATCHER_VALUE)
     : INITIAL_WATCHER_VALUE
+
   const job: SchedulerJob = () => {
     if (!effect.active) {
       return
     }
     if (cb) {
       // watch(source, cb)
-      const newValue = effect.run()
+      const newValue = effect.run() // 直接调用run时，其实会调用到fn方法。如果是triggerEffect，才有可能调用到scheduler。这里跑run，实际上是调用getter。
+      // 调用getter时，会访问到响应式对象。并把 这里创建的reactiveEffect存入dep中。
       if (
         deep ||
         forceTrigger ||
@@ -328,8 +336,10 @@ function doWatch(
       ) {
         // cleanup before running cb again
         if (cleanup) {
+          // 如果有cleanup，就执行。cleanup若有，它的值必为一个执行fn的函数。
           cleanup()
         }
+        // 执行cb
         callWithAsyncErrorHandling(cb, instance, ErrorCodes.WATCH_CALLBACK, [
           newValue,
           // pass undefined as the old value when it's changed for the first time
