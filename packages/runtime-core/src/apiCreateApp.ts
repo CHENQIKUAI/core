@@ -287,8 +287,8 @@ export function createAppAPI<HostElement>(
         isHydrate?: boolean,
         isSVG?: boolean
       ): any {
-        console.log('app mount called');
-        
+        console.log('app mount called')
+
         if (!isMounted) {
           // #5571
           if (__DEV__ && (rootContainer as any).__vue_app__) {
@@ -305,14 +305,18 @@ export function createAppAPI<HostElement>(
           //   'rootComponent, rootProps'
           // );
 
+          console.log(rootComponent, 'show rootComponent')
+
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
           )
 
+          // console.log(vnode, 'show vnode')
+
           // vnode.type 即 rootComponent 此时也还没有render方法。
           // console.log(deepCopy(vnode), 'show vnode');
-          
+
           // store app context on the root VNode.
           // this will be set on the root instance on initial mount.
           vnode.appContext = context
@@ -331,7 +335,7 @@ export function createAppAPI<HostElement>(
             // 设置vnode.type.render成函数
           }
           // console.log(deepCopy(vnode), 'show vnodea after render');
-          
+
           isMounted = true
           app._container = rootContainer
           // for devtools and telemetry
