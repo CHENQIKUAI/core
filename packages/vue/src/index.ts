@@ -7,8 +7,7 @@ import * as runtimeDom from '@vue/runtime-dom'
 import { isString, NOOP, generateCodeFrame, extend } from '@vue/shared'
 import { InternalRenderFunction } from 'packages/runtime-core/src/component'
 
-import '../../../sillyCopy/compiler-core/src/parse';
-
+import '../../../sillyCopy/compiler-core/src/parse'
 
 if (__DEV__) {
   initDev()

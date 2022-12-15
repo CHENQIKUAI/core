@@ -60,7 +60,6 @@ const app = createApp({
 - createApp(...).mount('#app')
 
   1.  createVNode(...) 创建 vnode
-      <!-- TODO: createVNode细节 -->
   2.  render(...) 根据 vnode 创建元素并挂载到指定位置。绑定数据和视图的关系。
       - patch vnode 到指定根元素（这里的 vnode 是组件 vnode）。
         - mountComponent 挂载组件。
@@ -73,6 +72,8 @@ const app = createApp({
                     2. transform 转换优化数据。
                     3. generate 生成渲染函数 (是字符串形式)。
                   - 使用 new Function 将渲染函数字符串变成函数。
+                - applyOptions
+                  - reactive 创建响应式对象
           - setupRenderEffect 设置渲染 effect，并挂载组件。
             1. 创建 componentUpdateFn。用 componentUpdateFn 创建 reactiveEffect。
             2. 调用 reactiveEffect 的 run 方法。这会去执行 componentUpdateFn。

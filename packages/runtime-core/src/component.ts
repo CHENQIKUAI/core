@@ -836,7 +836,7 @@ export function finishComponentSetup(
             extend(finalCompilerOptions.compatConfig, Component.compatConfig)
           }
         }
-        Component.render = compile(template, finalCompilerOptions) // 
+        Component.render = compile(template, finalCompilerOptions) //
         if (__DEV__) {
           endMeasure(instance, `compile`)
         }
@@ -855,6 +855,11 @@ export function finishComponentSetup(
 
   // support for 2.x options
   if (__FEATURE_OPTIONS_API__ && !(__COMPAT__ && skipOptions)) {
+    // console.log(
+    //   __FEATURE_OPTIONS_API__ && !(__COMPAT__ && skipOptions),
+    //   '__FEATURE_OPTIONS_API__ && !(__COMPAT__ && skipOptions)'
+    // )
+
     setCurrentInstance(instance)
     pauseTracking()
     applyOptions(instance)
