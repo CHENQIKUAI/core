@@ -312,7 +312,7 @@ export function createAppAPI<HostElement>(
             rootProps
           )
 
-          // console.log(vnode, 'show vnode')
+          console.log(vnode, 'show vnode')
 
           // vnode.type 即 rootComponent 此时也还没有render方法。
           // console.log(deepCopy(vnode), 'show vnode');

@@ -607,6 +607,8 @@ export function setupComponent(
   instance: ComponentInternalInstance,
   isSSR = false
 ) {
+  // console.log('setupComponent called')
+
   isInSSRComponentSetup = isSSR
 
   const { props, children } = instance.vnode
@@ -625,6 +627,8 @@ function setupStatefulComponent(
   instance: ComponentInternalInstance,
   isSSR: boolean
 ) {
+  // console.log('setupStatefulComponent called')
+
   const Component = instance.type as ComponentOptions
 
   if (__DEV__) {
@@ -783,6 +787,8 @@ export function finishComponentSetup(
   isSSR: boolean,
   skipOptions?: boolean
 ) {
+  // console.log('finishComponentSetup called')
+
   const Component = instance.type as ComponentOptions
 
   if (__COMPAT__) {
@@ -830,7 +836,7 @@ export function finishComponentSetup(
             extend(finalCompilerOptions.compatConfig, Component.compatConfig)
           }
         }
-        Component.render = compile(template, finalCompilerOptions)
+        Component.render = compile(template, finalCompilerOptions) // 
         if (__DEV__) {
           endMeasure(instance, `compile`)
         }
