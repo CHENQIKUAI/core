@@ -349,6 +349,8 @@ function baseCreateRenderer(
     insertStaticContent: hostInsertStaticContent
   } = options
 
+  const list = [] as any[]
+
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
   // 重要的来了
@@ -363,6 +365,11 @@ function baseCreateRenderer(
     slotScopeIds = null,
     optimized = __DEV__ && isHmrUpdating ? false : !!n2.dynamicChildren
   ) => {
+    list.push({ n1, n2 })
+    if (list.length !== 1) {
+      // console.log(n1, n2, 'show n1, n2')
+    }
+
     if (n1 === n2) {
       return
     }
@@ -411,14 +418,6 @@ function baseCreateRenderer(
         )
         break
       default:
-        // console.log({
-        //   type: type,
-        //   element: shapeFlag & ShapeFlags.ELEMENT,
-        //   component: shapeFlag & ShapeFlags.COMPONENT,
-        //   teleport: shapeFlag & ShapeFlags.TELEPORT,
-        //   suspense: __FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE,
-        //   __DEV__
-        // })
         if (shapeFlag & ShapeFlags.ELEMENT) {
           processElement(
             n1,
@@ -432,6 +431,7 @@ function baseCreateRenderer(
             optimized
           )
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
+          // 组件
           processComponent(
             n1,
             n2,
@@ -582,6 +582,7 @@ function baseCreateRenderer(
     hostRemove(anchor!)
   }
 
+  // 处理元素
   const processElement = (
     n1: VNode | null,
     n2: VNode,
@@ -618,6 +619,7 @@ function baseCreateRenderer(
     }
   }
 
+  // 挂载元素
   const mountElement = (
     vnode: VNode,
     container: RendererElement,
@@ -632,6 +634,7 @@ function baseCreateRenderer(
     let vnodeHook: VNodeHook | undefined | null
     const { type, props, shapeFlag, transition, dirs } = vnode
 
+    // 创建元素
     el = vnode.el = hostCreateElement(
       vnode.type as string,
       isSVG,
@@ -781,6 +784,7 @@ function baseCreateRenderer(
     start = 0
   ) => {
     for (let i = start; i < children.length; i++) {
+      // 若optimized则获取cloneIfMounted(children[i] as VNode)，否则获取normalizeVNode(children[i]))
       const child = (children[i] = optimized
         ? cloneIfMounted(children[i] as VNode)
         : normalizeVNode(children[i]))
@@ -1151,7 +1155,7 @@ function baseCreateRenderer(
     }
   }
 
-  // 处理组件
+  // 处理组件patch
   const processComponent = (
     n1: VNode | null,
     n2: VNode,
@@ -1163,6 +1167,8 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
+    console.log('processComponent called')
+
     n2.slotScopeIds = slotScopeIds
     if (n1 == null) {
       if (n2.shapeFlag & ShapeFlags.COMPONENT_KEPT_ALIVE) {
@@ -1199,6 +1205,8 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
+    console.log('mountComponent called')
+
     // 2.x compat may pre-create the component instance before actually
     // mounting
     const compatMountInstance =
@@ -1313,7 +1321,11 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
+    console.log('setupRenderEffect called')
+
     const componentUpdateFn = () => {
+      console.log('componentUpdateFn called')
+
       if (!instance.isMounted) {
         let vnodeHook: VNodeHook | null | undefined
         const { el, props } = initialVNode
@@ -1559,7 +1571,10 @@ function baseCreateRenderer(
     // create reactive effect for rendering
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
-      () => queueJob(update),
+      () => {
+        console.log('queueJob(update) called')
+        return queueJob(update)
+      },
       instance.scope // track it in component's effect scope
     ))
 
@@ -2331,11 +2346,14 @@ function baseCreateRenderer(
   }
 
   const render: RootRenderFunction = (vnode, container, isSVG) => {
+    console.log('render called')
+
     if (vnode == null) {
       if (container._vnode) {
         unmount(container._vnode, null, null, true)
       }
     } else {
+      console.log('render patch called')
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
     flushPreFlushCbs()
@@ -2371,7 +2389,7 @@ function baseCreateRenderer(
   }
 }
 
-// QUESTION: 这是干啥 奇奇怪怪
+// toggle allowRecurse属性
 function toggleRecurse(
   { effect, update }: ComponentInternalInstance,
   allowed: boolean

@@ -87,6 +87,7 @@ function createArrayInstrumentations() {
 
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target: Target, key: string | symbol, receiver: object) {
+    // console.log(target, key, 'show target and key')
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
     } else if (key === ReactiveFlags.IS_READONLY) {
@@ -178,7 +179,7 @@ function createSetter(shallow = false) {
     const result = Reflect.set(target, key, value, receiver)
     // don't trigger if target is something up in the prototype chain of original
     if (target === toRaw(receiver)) {
-      console.log('trigger')
+      // console.log('trigger')
       if (!hadKey) {
         // 派发通知
         trigger(target, TriggerOpTypes.ADD, key, value)

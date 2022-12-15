@@ -53,8 +53,8 @@ const queue: SchedulerJob[] = [] // 队列
 let flushIndex = 0 // 刷新索引
 
 // cbs猜测是callbacks
-const pendingPostFlushCbs: SchedulerJob[] = [] // 
-let activePostFlushCbs: SchedulerJob[] | null = null // 
+const pendingPostFlushCbs: SchedulerJob[] = [] //
+let activePostFlushCbs: SchedulerJob[] | null = null //
 let postFlushIndex = 0
 
 const resolvedPromise = /*#__PURE__*/ Promise.resolve() as Promise<any>
@@ -95,6 +95,8 @@ function findInsertionIndex(id: number) {
 
 // 添加job，且queueFlush
 export function queueJob(job: SchedulerJob) {
+  // console.log('queueJob called')
+
   // the dedupe search uses the startIndex argument of Array.includes()
   // by default the search index includes the current job that is being run
   // so it cannot recursively trigger itself again.
@@ -125,6 +127,8 @@ export function queueJob(job: SchedulerJob) {
 
 // 队列刷新
 function queueFlush() {
+  // console.log('queueFlush called')
+
   if (!isFlushing && !isFlushPending) {
     isFlushPending = true
     currentFlushPromise = resolvedPromise.then(flushJobs) // flushJobs进入微任务?
@@ -185,13 +189,15 @@ export function flushPreFlushCbs(
 // 把pendingPostFlushCbs中的函数们都执行了
 // 执行过程：先去重，再推到activePostFlushCbs，清空原来的，执行activePostFlushCbs中的，清空activePostFlushCbs中的.
 export function flushPostFlushCbs(seen?: CountMap) {
-  if (pendingPostFlushCbs.length) { // 如果pendingPostFlushCbs数组不是空
+  if (pendingPostFlushCbs.length) {
+    // 如果pendingPostFlushCbs数组不是空
     const deduped = [...new Set(pendingPostFlushCbs)] // 去重
     pendingPostFlushCbs.length = 0 // 清空
 
     // #1947 already has active queue, nested flushPostFlushCbs call
-    if (activePostFlushCbs) { // 如果 activePostFlushCbs不是falsy, 应该是在什么地方被设置成数组了
-      activePostFlushCbs.push(...deduped)  // 然后把去重的postFlushCbs推进去
+    if (activePostFlushCbs) {
+      // 如果 activePostFlushCbs不是falsy, 应该是在什么地方被设置成数组了
+      activePostFlushCbs.push(...deduped) // 然后把去重的postFlushCbs推进去
       return
     }
 
@@ -216,7 +222,7 @@ export function flushPostFlushCbs(seen?: CountMap) {
       activePostFlushCbs[postFlushIndex]() // 依次执行activePostFlushCbs中的函数
     }
     activePostFlushCbs = null // 执行完后, activePostFlushCbs设置成null
-    postFlushIndex = 0 
+    postFlushIndex = 0
   }
 }
 
@@ -236,6 +242,8 @@ const comparator = (a: SchedulerJob, b: SchedulerJob): number => {
 
 // 刷新任务：清空queue，执行pendingPostFlushCbs中的函数
 function flushJobs(seen?: CountMap) {
+  console.log('flushJobs called')
+
   isFlushPending = false
   isFlushing = true
   if (__DEV__) {
@@ -265,9 +273,11 @@ function flushJobs(seen?: CountMap) {
     : NOOP
 
   try {
-    for (flushIndex = 0; flushIndex < queue.length; flushIndex++) { // 遍历队列
+    for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
+      // 遍历队列
       const job = queue[flushIndex] // 任务
-      if (job && job.active !== false) { // 如果任务 是非激活状态的
+      if (job && job.active !== false) {
+        // 如果任务 是非激活状态的
         if (__DEV__ && check(job)) {
           continue
         }

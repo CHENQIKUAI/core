@@ -391,22 +391,32 @@ export interface ComponentInternalInstance {
   isDeactivated: boolean
   /**
    * @internal
+   * beforeCreate
+   * bc
    */
   [LifecycleHooks.BEFORE_CREATE]: LifecycleHook
   /**
    * @internal
+   * created
+   * c
    */
   [LifecycleHooks.CREATED]: LifecycleHook
   /**
    * @internal
+   * beforeMount
+   * bm
    */
   [LifecycleHooks.BEFORE_MOUNT]: LifecycleHook
   /**
    * @internal
+   * mounted
+   * m
    */
   [LifecycleHooks.MOUNTED]: LifecycleHook
   /**
    * @internal
+   * beforeUpdate
+   * bu
    */
   [LifecycleHooks.BEFORE_UPDATE]: LifecycleHook
   /**

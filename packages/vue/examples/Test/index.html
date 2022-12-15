@@ -12,48 +12,25 @@
 <body>
     <div id="app"></div>
     <script>
-        const { createApp, defineComponent, computed, watch, ref } = Vue
-
-        const c = ref(1)
-        const unwatch = watch(c, (newValue, oldValue, onCleanup) => {
-            console.log('cb')
-            onCleanup(() => {
-                console.log('this is before unwatch')
-            })
-        })
-        c.value++;
-
-        setTimeout(() => {
-            unwatch();
-            console.log('unwatch')
-        })
+        const { createApp, defineComponent, computed, watch, ref, reactive, effect } = Vue
 
 
-
-        const TestForC = defineComponent({
-            template: `<div v-for="item in list" :key="item">{{item}}</div>`,
-            data() {
-                return {
-                    list: [1, 2, 3]
-                }
-            },
-            mounted() {
-                console.log('testfor c mounted');
-            }
-        })
 
         const app = createApp({
             components: [],
             template: `
-            <div key="i" v-for="(item111, index222, haha333) in list">
-                <div>first</div>
-                <li>second</li>
-                <span>third</span>
-                {{m2}}
-            </div>
-            <button @click="show = !show">switch message</button>
-            <div v-if="show">3333
-                {{message}}
+            <div ref='testRef'>
+                <div key="i" v-for="(item111, index222, haha333) in list" @click="list.push({id: list.length, name: 'll'})">
+                    <div>first</div>
+                    <li>second</li>
+                    <span>third</span>
+                    <span>third</span>
+                    {{m2}}
+                </div>
+                <button @click="show = !show">switch message</button>
+                <div v-if="show">3333
+                    {{message}}
+                </div>
             </div>
             `,
             mounted() {

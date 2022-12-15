@@ -450,6 +450,7 @@ export function createPathGetter(ctx: any, path: string) {
   }
 }
 
+// 访问value，收集依赖
 export function traverse(value: unknown, seen?: Set<unknown>) {
   if (!isObject(value) || (value as any)[ReactiveFlags.SKIP]) {
     return value
