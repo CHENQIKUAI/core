@@ -1414,6 +1414,7 @@ function baseCreateRenderer(
           initialVNode.el = subTree.el
         }
         // mounted hook
+        // 执行mouted钩子
         if (m) {
           queuePostRenderEffect(m, parentSuspense)
         }
@@ -1578,6 +1579,12 @@ function baseCreateRenderer(
       instance.scope // track it in component's effect scope
     ))
 
+    // run执行时，activeEffect是上述的effect。且componentUpdateFn会被执行。
+    // componentUpdateFn被执行，patch了组件。
+    // 在这个过程中访问了响应式数据，那么targetMap中对应的属性会收集当前的effect作为。
+    // 若响应式数据某属性值更改了，会找到对应的effect，然后trigger它。
+    // trigger会执行scheduler，即queueJob(update)。
+    // update就是执行effect.run，其实就是再次执行componentUpdateFn。
     const update: SchedulerJob = (instance.update = () => effect.run())
     update.id = instance.uid
     // allowRecurse
