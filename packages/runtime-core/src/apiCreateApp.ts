@@ -305,14 +305,14 @@ export function createAppAPI<HostElement>(
           //   'rootComponent, rootProps'
           // );
 
-          console.log(rootComponent, 'show rootComponent')
+          // console.log(rootComponent, 'show rootComponent')
 
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
           )
 
-          console.log(vnode, 'show vnode')
+          console.log(deepCopy(vnode), 'show vnode')
 
           // vnode.type 即 rootComponent 此时也还没有render方法。
           // console.log(deepCopy(vnode), 'show vnode');

@@ -60,7 +60,15 @@ const app = createApp({
 - createApp(...).mount('#app')
 
   1.  createVNode(...) 创建 vnode
+
+      - guardReactiveProps 若 props 是响应式对象，则拷贝其数据再操作
+      - normalizeClass normalizeStyle 对 class 和 style 的对象和数组模式进行处理
+      - 根据 type 创建 shapeFlag
+      - normalizeChildren
+        - shapeFlag 再处理
+
   2.  render(...) 根据 vnode 创建元素并挂载到指定位置。绑定数据和视图的关系。
+
       - patch vnode 到指定根元素（这里的 vnode 是组件 vnode）。
         - mountComponent 挂载组件。
           - setupComponent 执行时用 reactive 创建响应式数据

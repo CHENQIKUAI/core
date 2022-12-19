@@ -486,6 +486,7 @@ function createBaseVNode(
     defineLegacyVNodeProperties(vnode)
   }
 
+  // console.log(currentBlock, 'show currentBlock')
   return vnode
 }
 
@@ -511,6 +512,7 @@ function _createVNode(
   }
 
   if (isVNode(type)) {
+    // console.log('in createVNode   isVNode')
     // createVNode receiving an existing vnode. This happens in cases like
     // <component :is="vnode"/>
     // #2078 make sure to merge refs during the clone instead of overwriting it
@@ -531,6 +533,7 @@ function _createVNode(
 
   // class component normalization.
   if (isClassComponent(type)) {
+    console.log('in createVNode     isClassComponent')
     type = type.__vccOpts
   }
 
@@ -748,6 +751,7 @@ export function cloneIfMounted(child: VNode): VNode {
 }
 
 export function normalizeChildren(vnode: VNode, children: unknown) {
+  // console.log(deepCopy(vnode), 'show vnode at the start of normalizeChildren')
   let type = 0
   const { shapeFlag } = vnode
   if (children == null) {
@@ -799,7 +803,10 @@ export function normalizeChildren(vnode: VNode, children: unknown) {
     }
   }
   vnode.children = children as VNodeNormalizedChildren
+  // console.log(type, 'show type')
+
   vnode.shapeFlag |= type
+  // console.log(deepCopy(vnode), 'show vnode at the end of normalizeChildren')
 }
 
 export function mergeProps(...args: (Data & VNodeProps)[]) {
