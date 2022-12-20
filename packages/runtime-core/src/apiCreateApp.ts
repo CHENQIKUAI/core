@@ -287,7 +287,7 @@ export function createAppAPI<HostElement>(
         isHydrate?: boolean,
         isSVG?: boolean
       ): any {
-        console.log('app mount called')
+        // console.log('app mount called')
 
         if (!isMounted) {
           // #5571
@@ -312,7 +312,7 @@ export function createAppAPI<HostElement>(
             rootProps
           )
 
-          console.log(deepCopy(vnode), 'show vnode')
+          // console.log(deepCopy(vnode), 'show vnode')
 
           // vnode.type 即 rootComponent 此时也还没有render方法。
           // console.log(deepCopy(vnode), 'show vnode');

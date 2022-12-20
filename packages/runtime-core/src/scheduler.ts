@@ -242,7 +242,7 @@ const comparator = (a: SchedulerJob, b: SchedulerJob): number => {
 
 // 刷新任务：清空queue，执行pendingPostFlushCbs中的函数
 function flushJobs(seen?: CountMap) {
-  console.log('flushJobs called')
+  // console.log('flushJobs called')
 
   isFlushPending = false
   isFlushing = true

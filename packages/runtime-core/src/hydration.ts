@@ -67,7 +67,7 @@ export function createHydrationFunctions(
   } = rendererInternals
 
   const hydrate: RootHydrateFunction = (vnode, container) => {
-    console.log('hydrate called')
+    // console.log('hydrate called')
     if (!container.hasChildNodes()) {
       __DEV__ &&
         warn(
@@ -97,7 +97,7 @@ export function createHydrationFunctions(
     slotScopeIds: string[] | null,
     optimized = false
   ): Node | null => {
-    console.log('hydrateNode called');
+    // console.log('hydrateNode called');
     
     const isFragmentStart = isComment(node) && node.data === '['
     const onMismatch = () =>

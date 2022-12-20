@@ -557,6 +557,7 @@ function baseCreateRenderer(
     nextSibling: RendererNode | null
   ) => {
     let next
+    // QUESTION: el和anchor什么关系
     while (el && el !== anchor) {
       next = hostNextSibling(el)
       hostInsert(el, container, nextSibling)
@@ -1160,7 +1161,7 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
-    console.log('processComponent called')
+    // console.log('processComponent called')
 
     n2.slotScopeIds = slotScopeIds
     if (n1 == null) {
@@ -1198,7 +1199,7 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
-    console.log('mountComponent called')
+    // console.log('mountComponent called')
 
     // 2.x compat may pre-create the component instance before actually
     // mounting
@@ -1314,10 +1315,10 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
-    console.log('setupRenderEffect called')
+    // console.log('setupRenderEffect called')
 
     const componentUpdateFn = () => {
-      console.log('componentUpdateFn called')
+      // console.log('componentUpdateFn called')
 
       if (!instance.isMounted) {
         let vnodeHook: VNodeHook | null | undefined
@@ -1566,7 +1567,7 @@ function baseCreateRenderer(
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => {
-        console.log('queueJob(update) called')
+        // console.log('queueJob(update) called')
         return queueJob(update)
       },
       instance.scope // track it in component's effect scope
@@ -1627,7 +1628,7 @@ function baseCreateRenderer(
     slotScopeIds,
     optimized = false
   ) => {
-    console.log('patchChildren called')
+    // console.log('patchChildren called')
 
     const c1 = n1 && n1.children
     const prevShapeFlag = n1 ? n1.shapeFlag : 0
@@ -1637,11 +1638,11 @@ function baseCreateRenderer(
     // fast path
     if (patchFlag > 0) {
       if (patchFlag & PatchFlags.KEYED_FRAGMENT) {
-        console.log('patchFlag & PatchFlags.KEYED_FRAGMENT')
+        // console.log('patchFlag & PatchFlags.KEYED_FRAGMENT')
 
         // this could be either fully-keyed or mixed (some keyed some not)
         // presence of patchFlag means children are guaranteed to be arrays
-        console.log(c1, c2)
+        // console.log(c1, c2)
         patchKeyedChildren(
           c1 as VNode[],
           c2 as VNodeArrayChildren,
@@ -1800,13 +1801,15 @@ function baseCreateRenderer(
     let e1 = c1.length - 1 // prev ending index
     let e2 = l2 - 1 // next ending index
 
+    // console.log({ c1, c2 })
+
     // 1. sync from start
     // 从头往后遍历，若是SameVNodeType，那么patch这俩节点。
     // 若不是,则退出遍历。
     // (a b) c
     // (a b) d e
     while (i <= e1 && i <= e2) {
-      console.log({ i, e1, e2 }, 'sync from start')
+      // console.log({ i, e1, e2 }, 'sync from start')
       const n1 = c1[i]
       const n2 = (c2[i] = optimized
         ? cloneIfMounted(c2[i] as VNode)
@@ -1835,7 +1838,7 @@ function baseCreateRenderer(
     // a (b c)
     // d e (b c)
     while (i <= e1 && i <= e2) {
-      console.log({ i, e1, e2 }, 'sync from end')
+      // console.log({ i, e1, e2 }, 'sync from end')
       const n1 = c1[e1]
       const n2 = (c2[e2] = optimized
         ? cloneIfMounted(c2[e2] as VNode)
@@ -1860,7 +1863,9 @@ function baseCreateRenderer(
     }
 
     // 3. common sequence + mount
-    // 正常顺序尾部挂载新节点
+    // 若遍历的位置超出旧children，但是在新children范围内。
+    // 这说明新children比就节点多了一些节点。
+    // 需要挂载这些多出来的节点。
     // (a b)
     // (a b) c
     // i = 2, e1 = 1, e2 = 2
@@ -1891,7 +1896,9 @@ function baseCreateRenderer(
     }
 
     // 4. common sequence + unmount
-    // 正常顺序尾部卸载旧节点
+    // 若遍历的位置在旧children范围内，但是超出新children。
+    // 这说明新children比旧children少了一些节点。
+    // 需要卸载这些多出来的节点。
     // (a b) c
     // (a b)
     // i = 2, e1 = 2, e2 = 1
@@ -1906,7 +1913,7 @@ function baseCreateRenderer(
     }
 
     // 5. unknown sequence
-    // 未知顺序
+    // 若非上述的集中情况，那么就不是节点边缘发生了改变，而是节点中间有变化。
     // [i ... e1 + 1]: a b [c d e] f g
     // [i ... e2 + 1]: a b [e d c h] f g
     // i = 2, e1 = 4, e2 = 5
@@ -1915,6 +1922,7 @@ function baseCreateRenderer(
       const s2 = i // next starting index
 
       // 5.1 build key:index map for newChildren
+      // 将新children的key和index关系保存到keyToNewIndexMap中。
       const keyToNewIndexMap: Map<string | number | symbol, number> = new Map()
       for (i = s2; i <= e2; i++) {
         const nextChild = (c2[i] = optimized
@@ -1935,22 +1943,25 @@ function baseCreateRenderer(
       // 5.2 loop through old children left to be patched and try to patch
       // matching nodes & remove nodes that are no longer present
       let j
-      let patched = 0
-      const toBePatched = e2 - s2 + 1
-      let moved = false
+      let patched = 0 // patched的数量
+      const toBePatched = e2 - s2 + 1 // 新children中剩余节点数
+      let moved = false // 追踪，是否有任何节点被移动过
       // used to track whether any node has moved
-      let maxNewIndexSoFar = 0
+      let maxNewIndexSoFar = 0 //
       // works as Map<newIndex, oldIndex>
       // Note that oldIndex is offset by +1
       // and oldIndex = 0 is a special value indicating the new node has
       // no corresponding old node.
       // used for determining longest stable subsequence
-      const newIndexToOldIndexMap = new Array(toBePatched)
+      const newIndexToOldIndexMap = new Array(toBePatched) // 创建长度为toBePatched的数组,并把项都设置成0
       for (i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0
 
       for (i = s1; i <= e1; i++) {
+        // 遍历旧children
         const prevChild = c1[i]
         if (patched >= toBePatched) {
+          // 在旧children存在没有key的节点时，才有可能触发本逻辑。
+
           // all new children have been patched so this can only be a removal
           unmount(prevChild, parentComponent, parentSuspense, true)
           continue
@@ -1958,8 +1969,12 @@ function baseCreateRenderer(
         let newIndex
         if (prevChild.key != null) {
           newIndex = keyToNewIndexMap.get(prevChild.key)
+          // 获取旧children中当前正遍历到的项的key,去keyToNewIndexMap中查询,其对应的index,
+          // 若index不为undefined,表示,当前项能够在新children中查找到
         } else {
           // key-less node, try to locate a key-less node of the same type
+          // 若当前项没有key，那么去新children中结果1、2、3、4未处理的项中查找isSameVNodeType的节点
+          // 然后把这个节点的索引值设置到newIndex中。（注释者注：这个想法很勇猛）
           for (j = s2; j <= e2; j++) {
             if (
               newIndexToOldIndexMap[j - s2] === 0 &&
@@ -1971,9 +1986,16 @@ function baseCreateRenderer(
           }
         }
         if (newIndex === undefined) {
+          // 若newIndex是undefined，表明在新children中找不到当前节点可以对应上的节点
+          // 那就卸载当前节点
           unmount(prevChild, parentComponent, parentSuspense, true)
         } else {
+          // 若可以找到对应上的节点。
+          // 在newIndexToOldIndexMap上设置 i + 1
           newIndexToOldIndexMap[newIndex - s2] = i + 1
+          // 下面的步骤就是为了最终判断
+          // 旧children中经历1、2、3、4未处理的但也存在于新children中的节点们，
+          // 它们的相对先后顺序是否改变
           if (newIndex >= maxNewIndexSoFar) {
             maxNewIndexSoFar = newIndex
           } else {
@@ -1999,14 +2021,21 @@ function baseCreateRenderer(
       const increasingNewIndexSequence = moved
         ? getSequence(newIndexToOldIndexMap)
         : EMPTY_ARR
+        
+      console.log(newIndexToOldIndexMap, 'show newIndexToOldIndexMap')
+      console.log(increasingNewIndexSequence, 'show increasingNewIndexSequence')
+
       j = increasingNewIndexSequence.length - 1
       // looping backwards so that we can use last patched node as anchor
       for (i = toBePatched - 1; i >= 0; i--) {
+        // 从后往前遍历新children中 经历1、2、3、4流程，还未处理的项
         const nextIndex = s2 + i
-        const nextChild = c2[nextIndex] as VNode
+        const nextChild = c2[nextIndex] as VNode // 遍历的新children时，当前项
         const anchor =
           nextIndex + 1 < l2 ? (c2[nextIndex + 1] as VNode).el : parentAnchor
         if (newIndexToOldIndexMap[i] === 0) {
+          // 若是0，表明本节点在旧children中没有对应的。
+          // 需要挂载
           // mount new
           patch(
             null,
@@ -2020,6 +2049,10 @@ function baseCreateRenderer(
             optimized
           )
         } else if (moved) {
+          // 若不为0，且，moved
+          // 表明本节点在旧children中有对应的。
+          // 而且本节点相对于其他在旧children中有对应的节点
+          // 的前后相对位置，有变化。
           // move if:
           // There is no stable subsequence (e.g. a reverse)
           // OR current node is not among the stable sequence
@@ -2042,6 +2075,7 @@ function baseCreateRenderer(
   ) => {
     const { el, type, transition, children, shapeFlag } = vnode
     if (shapeFlag & ShapeFlags.COMPONENT) {
+      // 若是组件
       move(vnode.component!.subTree, container, anchor, moveType)
       return
     }
@@ -2361,14 +2395,14 @@ function baseCreateRenderer(
   }
 
   const render: RootRenderFunction = (vnode, container, isSVG) => {
-    console.log('render called')
+    // console.log('render called')
 
     if (vnode == null) {
       if (container._vnode) {
         unmount(container._vnode, null, null, true)
       }
     } else {
-      console.log('render patch called')
+      // console.log('render patch called')
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
     flushPreFlushCbs()

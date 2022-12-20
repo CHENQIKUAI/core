@@ -14,7 +14,8 @@
     <script>
         const { createApp, defineComponent, computed, watch, ref, reactive, effect } = Vue
 
-
+        const l1 = [{ key: 1, name: '1' }, { key: 2, name: '2' }, { key: 3, name: '3' }, { key: 4, name: '4' }, { key: 5, name: '5' }];
+        const l2 = [{ key: 1, name: '1' }, { key: 2, name: '2' }, { key: 4, name: '4444' }, { key: 3, name: '3333' }, { key: 5, name: '5' }];
 
         const app = createApp({
             components: [],
@@ -31,6 +32,9 @@
                 <div v-if="show">3333
                     {{message}}
                 </div>
+                <div @click="c">
+                    <div v-for="n in ll" :key="n.key">{{n.name}}</div>
+                </div>
             </div>
             `,
             mounted() {
@@ -45,12 +49,18 @@
                     eventName: 'click',
                     list: [{ id: 1, name: 'nzz' }, { id: 2, name: 'ryy' }, { id: 3, name: 'lhc' }],
                     show: false,
+                    ll: l1,
+                    o: '1',
                 }
             },
             methods: {
                 handleCLick() {
                     console.log('handleCLick')
-                }
+                },
+                c() {
+                    this.o = this.o === '1' ? '2' : '1';
+                    this.ll = this.o === '1' ? l1 : l2;
+                },
             },
             computed: {
                 m2() {
