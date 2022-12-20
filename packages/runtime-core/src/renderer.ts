@@ -1801,6 +1801,8 @@ function baseCreateRenderer(
     let e2 = l2 - 1 // next ending index
 
     // 1. sync from start
+    // 从头往后遍历，若是SameVNodeType，那么patch这俩节点。
+    // 若不是,则退出遍历。
     // (a b) c
     // (a b) d e
     while (i <= e1 && i <= e2) {
@@ -1828,6 +1830,8 @@ function baseCreateRenderer(
     }
 
     // 2. sync from end
+    // 从后往前遍历，若是SameVNodeType，那么patch这俩节点。
+    // 若不是，则退出遍历。
     // a (b c)
     // d e (b c)
     while (i <= e1 && i <= e2) {
@@ -1856,6 +1860,7 @@ function baseCreateRenderer(
     }
 
     // 3. common sequence + mount
+    // 正常顺序尾部挂载新节点
     // (a b)
     // (a b) c
     // i = 2, e1 = 1, e2 = 2
@@ -1886,6 +1891,7 @@ function baseCreateRenderer(
     }
 
     // 4. common sequence + unmount
+    // 正常顺序尾部卸载旧节点
     // (a b) c
     // (a b)
     // i = 2, e1 = 2, e2 = 1
@@ -1900,6 +1906,7 @@ function baseCreateRenderer(
     }
 
     // 5. unknown sequence
+    // 未知顺序
     // [i ... e1 + 1]: a b [c d e] f g
     // [i ... e2 + 1]: a b [e d c h] f g
     // i = 2, e1 = 4, e2 = 5
