@@ -349,8 +349,6 @@ function baseCreateRenderer(
     insertStaticContent: hostInsertStaticContent
   } = options
 
-  const list = [] as any[]
-
   // Note: functions inside this closure should use `const xxx = () => {}`
   // style in order to prevent being inlined by minifiers.
   // 重要的来了
@@ -365,11 +363,6 @@ function baseCreateRenderer(
     slotScopeIds = null,
     optimized = __DEV__ && isHmrUpdating ? false : !!n2.dynamicChildren
   ) => {
-    list.push({ n1, n2 })
-    if (list.length !== 1) {
-      // console.log(n1, n2, 'show n1, n2')
-    }
-
     if (n1 === n2) {
       return
     }
@@ -1634,6 +1627,8 @@ function baseCreateRenderer(
     slotScopeIds,
     optimized = false
   ) => {
+    console.log('patchChildren called')
+
     const c1 = n1 && n1.children
     const prevShapeFlag = n1 ? n1.shapeFlag : 0
     const c2 = n2.children
@@ -1642,8 +1637,11 @@ function baseCreateRenderer(
     // fast path
     if (patchFlag > 0) {
       if (patchFlag & PatchFlags.KEYED_FRAGMENT) {
+        console.log('patchFlag & PatchFlags.KEYED_FRAGMENT')
+
         // this could be either fully-keyed or mixed (some keyed some not)
         // presence of patchFlag means children are guaranteed to be arrays
+        console.log(c1, c2)
         patchKeyedChildren(
           c1 as VNode[],
           c2 as VNodeArrayChildren,
@@ -1687,6 +1685,7 @@ function baseCreateRenderer(
         // prev children was array
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
           // two arrays, cannot assume anything, do full diff
+          console.log('shapeFlag & ShapeFlags.ARRAY_CHILDREN')
           patchKeyedChildren(
             c1 as VNode[],
             c2 as VNodeArrayChildren,
@@ -1805,6 +1804,7 @@ function baseCreateRenderer(
     // (a b) c
     // (a b) d e
     while (i <= e1 && i <= e2) {
+      console.log({ i, e1, e2 }, 'sync from start')
       const n1 = c1[i]
       const n2 = (c2[i] = optimized
         ? cloneIfMounted(c2[i] as VNode)
@@ -1831,6 +1831,7 @@ function baseCreateRenderer(
     // a (b c)
     // d e (b c)
     while (i <= e1 && i <= e2) {
+      console.log({ i, e1, e2 }, 'sync from end')
       const n1 = c1[e1]
       const n2 = (c2[e2] = optimized
         ? cloneIfMounted(c2[e2] as VNode)
@@ -2440,6 +2441,7 @@ export function traverseStaticChildren(n1: VNode, n2: VNode, shallow = false) {
   }
 }
 
+// 最长递增子序列
 // https://en.wikipedia.org/wiki/Longest_increasing_subsequence
 function getSequence(arr: number[]): number[] {
   const p = arr.slice()

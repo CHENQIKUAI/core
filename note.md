@@ -96,6 +96,12 @@ const app = createApp({
       - 执行时会调用 componentUpdateFn。
         componentUpdateFn 会 patch 组件。
 
+
 ## diff 算法
+
+
+
+
+
 
 <!-- TODO: -->
