@@ -2021,7 +2021,7 @@ function baseCreateRenderer(
       const increasingNewIndexSequence = moved
         ? getSequence(newIndexToOldIndexMap)
         : EMPTY_ARR
-        
+
       console.log(newIndexToOldIndexMap, 'show newIndexToOldIndexMap')
       console.log(increasingNewIndexSequence, 'show increasingNewIndexSequence')
 
@@ -2033,6 +2033,8 @@ function baseCreateRenderer(
         const nextChild = c2[nextIndex] as VNode // 遍历的新children时，当前项
         const anchor =
           nextIndex + 1 < l2 ? (c2[nextIndex + 1] as VNode).el : parentAnchor
+        // anchor是当前节点的下一个节点。若当前节点是最后一个节点，那么anchor就是parentAnchor。
+        // 调试时，parentAnchor打印出了#text，位置是在所有兄弟节点之后。
         if (newIndexToOldIndexMap[i] === 0) {
           // 若是0，表明本节点在旧children中没有对应的。
           // 需要挂载
@@ -2103,6 +2105,8 @@ function baseCreateRenderer(
       moveStaticNode(vnode, container, anchor)
       return
     }
+
+    console.log({ vnode, container, anchor }, 'show arguments')
 
     // single nodes
     const needTransition =
