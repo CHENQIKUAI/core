@@ -2022,8 +2022,14 @@ function baseCreateRenderer(
         ? getSequence(newIndexToOldIndexMap)
         : EMPTY_ARR
 
-      console.log(newIndexToOldIndexMap, 'show newIndexToOldIndexMap')
-      console.log(increasingNewIndexSequence, 'show increasingNewIndexSequence')
+      console.log(
+        JSON.stringify(
+          { newIndexToOldIndexMap, increasingNewIndexSequence },
+          null,
+          2
+        ),
+        'show newIndexToOldIndexMap and increasingNewIndexSequence'
+      )
 
       j = increasingNewIndexSequence.length - 1
       // looping backwards so that we can use last patched node as anchor
@@ -2058,7 +2064,19 @@ function baseCreateRenderer(
           // move if:
           // There is no stable subsequence (e.g. a reverse)
           // OR current node is not among the stable sequence
+
+          // j是从后开始往前遍历increasingNewIndexSequence数组
+          // increasingNewIndexSequence[j]意思是 最长正序序列中j位置的虚拟节点，
+          // 在旧children中对应的位置
+
+          // i !== increasingNewIndexSequence[j] 的意思是：
+          //
+          // increasingNewIndexSequence 数组 的长度一定会小于 toBePatched 的大小
+          // 这里的目的就是以最小代价，移动元素。
+          // 思路：找到相对顺序不变的最大的子序列。
+          // 移动非这个子序列中的元素。
           if (j < 0 || i !== increasingNewIndexSequence[j]) {
+            // 这是什么条件？
             move(nextChild, container, anchor, MoveType.REORDER)
           } else {
             j--
@@ -2106,7 +2124,7 @@ function baseCreateRenderer(
       return
     }
 
-    console.log({ vnode, container, anchor }, 'show arguments')
+    // console.log({ vnode, container, anchor }, 'show arguments')
 
     // single nodes
     const needTransition =
@@ -2488,6 +2506,7 @@ export function traverseStaticChildren(n1: VNode, n2: VNode, shallow = false) {
 
 // 最长递增子序列
 // https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+// 获取数组arr中,最长的递增的项的索引数组集合.
 function getSequence(arr: number[]): number[] {
   const p = arr.slice()
   const result = [0]
@@ -2528,3 +2547,5 @@ function getSequence(arr: number[]): number[] {
   }
   return result
 }
+
+// console.log(getSequence([1, 2, 9, 4, 5, 6]), 'show getSequence([1,2,9,4,5,6])')

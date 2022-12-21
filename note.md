@@ -96,12 +96,64 @@ const app = createApp({
       - 执行时会调用 componentUpdateFn。
         componentUpdateFn 会 patch 组件。
 
-
 ## diff 算法
 
 
+### patchKeyedChildren
 
+1.  sync from start
+    从头往后遍历，若是 SameVNodeType，那么 patch 这俩节点。
+    若不是,则退出遍历。
+    (a b) c
+    (a b) d e
 
+2.  sync from end
+    从后往前遍历，若是 SameVNodeType，那么 patch 这俩节点。
+    若不是，则退出遍历。
+    a (b c)
+    d e (b c)
 
+3.  common sequence + mount
+    若遍历的位置超出旧 children，但是在新 children 范围内。
+    这说明新 children 比就节点多了一些节点。
+    需要挂载这些多出来的节点。
+    (a b)
+    (a b) c
+    i = 2, e1 = 1, e2 = 2
+    (a b)
+    c (a b)
+    i = 0, e1 = -1, e2 = 0
 
-<!-- TODO: -->
+4.  common sequence + unmount
+    若遍历的位置在旧 children 范围内，但是超出新 children。
+    这说明新 children 比旧 children 少了一些节点。
+    需要卸载这些多出来的节点。
+    (a b) c
+    (a b)
+    i = 2, e1 = 2, e2 = 1
+    a (b c)
+    (b c)
+    i = 0, e1 = 0, e2 = -1
+
+5.  unknown sequence
+    若非上述的集中情况，那么就不是节点边缘发生了改变，而是节点中间有变化。
+    \[i ... e1 + 1\]: a b [c d e] f g
+    \[i ... e2 + 1\]: a b [e d c h] f g
+    i = 2, e1 = 4, e2 = 5
+
+5.1 build key:index map for newChildren
+将新 children 的 key 和 index 关系保存到 keyToNewIndexMap 中。
+
+5.2 loop through old children left to be patched and try to patch
+matching nodes & remove nodes that are no longer present
+遍历旧 children，移除在新 children 中不再出现的节点。
+判断该节点是否出现？
+若有 key，则看是否有 key 匹配；
+若无 key，则看是否 isSameVNodeType。
+若在新 children 中再次出现，
+则 patch 之。
+
+5.3 move and mount
+generate longest stable subsequence only when nodes have moved
+找到相对顺序不变的最大的子序列。
+移动非这个子序列中的元素，到正确的位置。
