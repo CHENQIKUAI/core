@@ -162,3 +162,61 @@ matching nodes & remove nodes that are no longer present
 generate longest stable subsequence only when nodes have moved
 找到相对顺序不变的最大的子序列。
 移动非这个子序列中的元素，到正确的位置。
+
+## 比较 patchUnkeyedChildren 和 patchKeyedChildren
+
+某节点有大量子孙节点，且该节点的位置经过移动。
+此时，若节点有 key，会比无 key，更新时所消耗的资源要小。
+无 key 的情况，需要卸载大量子孙节点，再在指定位置处，再大量创建子孙节点。
+有 key 的情况，则移动该节点即可。少去了卸载和创建的操作。
+
+那是否有某种情况，无 key 会比有 key 更优呢？
+查找不用移动的最长子序列调用的方法 getSequence，貌似需要消耗一些资源。
+若，children 是大量普通 div，只有一层，内容是字符串。然后打乱顺序。
+这种情况下，无 key 应该会比有 key 更优吧？
+如何测试看实际效果呢？
+
+```js
+const unkeyedl1 = [
+  { name: '1' },
+  { name: '2', children: [{ name: '21' }, { name: '22' }] },
+  { name: '3' },
+  { name: '4' },
+  { name: '5' }
+]
+const unkeyedl2 = [
+  { name: '1' },
+  { name: '3333' },
+  { name: '4444' },
+  { name: '2222', children: [{ name: '222221' }, { name: '222222' }] },
+  { name: '5' }
+]
+const keyedl1 = [
+  { key: 1, name: '1' },
+  {
+    key: 'b',
+    name: '2',
+    children: [
+      { key: 'b1', name: '21' },
+      { key: 'b2', name: '22' }
+    ]
+  },
+  { key: 'c', name: '3' },
+  { key: 'd', name: '4' },
+  { key: 5, name: '5' }
+]
+const keyedl2 = [
+  { key: 1, name: '1' },
+  { key: 'c', name: '3333' },
+  { key: 'd', name: '4444' },
+  {
+    key: 'b',
+    name: '2222',
+    children: [
+      { key: 'b1', name: '222221' },
+      { key: 'b2', name: '222222' }
+    ]
+  },
+  { key: 5, name: '5' }
+]
+```

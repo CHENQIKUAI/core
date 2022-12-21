@@ -17,11 +17,7 @@
         const l1 = [{ key: 1, name: '1' }, { key: 'b', name: '2' }, { key: 'c', name: '3' }, { key: 'd', name: '4' }, { key: 5, name: '5' }];
         const l2 = [{ key: 1, name: '1' }, { key: 'c', name: '3333' }, { key: 'd', name: '4444' }, { key: 'b', name: '2222' }, { key: 5, name: '5' }];
 
-        const app = createApp({
-            components: [],
-            template: `
-            <div ref='testRef'>
-                <div key="i" v-for="(item111, index222, haha333) in list" @click="list.push({id: list.length, name: 'll'})">
+        /* <div key="i" v-for="(item111, index222, haha333) in list" @click="list.push({id: list.length, name: 'll'})">
                     <div>first</div>
                     <li>second</li>
                     <span>third</span>
@@ -32,13 +28,26 @@
                 <div v-if="show">3333
                     {{message}}
                 </div>
-                <div @click="c">
-                    <div v-for="n in ll" >{{n.name}}</div>
+                <br/> 
+                
+                <div v-for="n in ll">
+                        <input/>
+                    </div>
+                
+                */
+
+        const app = createApp({
+            components: [],
+            template: `
+            <div ref='testRef'>
+                <button @click="c">toggle</button>
+                <div>
+                    <div v-for="n in ll" :key="n.key">{{n.name}}</div>
                 </div>
             </div>
             `,
             mounted() {
-                console.log('mounted');
+                // console.log('mounted');
             },
             beforeDestroy() {
                 console.log('beforeDestroy');

@@ -382,7 +382,7 @@ function baseCreateRenderer(
     }
 
     const { type, ref, shapeFlag } = n2
-    // console.log(type, 'type')
+    console.log(type, 'show type of n2')
     switch (type) {
       case Text:
         processText(n1, n2, container, anchor)
@@ -1638,7 +1638,7 @@ function baseCreateRenderer(
     // fast path
     if (patchFlag > 0) {
       if (patchFlag & PatchFlags.KEYED_FRAGMENT) {
-        // console.log('patchFlag & PatchFlags.KEYED_FRAGMENT')
+        console.log('patchFlag & PatchFlags.KEYED_FRAGMENT')
 
         // this could be either fully-keyed or mixed (some keyed some not)
         // presence of patchFlag means children are guaranteed to be arrays
@@ -1656,6 +1656,8 @@ function baseCreateRenderer(
         )
         return
       } else if (patchFlag & PatchFlags.UNKEYED_FRAGMENT) {
+        console.log('patchFlag & PatchFlags.UNKEYED_FRAGMENT')
+
         // unkeyed
         patchUnkeyedChildren(
           c1 as VNode[],
@@ -1674,6 +1676,7 @@ function baseCreateRenderer(
 
     // children has 3 possibilities: text, array or no children.
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      console.log('shapeFlag & ShapeFlags.TEXT_CHILDREN')
       // text children fast path
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         unmountChildren(c1 as VNode[], parentComponent, parentSuspense)
@@ -1683,6 +1686,7 @@ function baseCreateRenderer(
       }
     } else {
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        console.log('prevShapeFlag & ShapeFlags.ARRAY_CHILDREN')
         // prev children was array
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
           // two arrays, cannot assume anything, do full diff
@@ -1706,10 +1710,12 @@ function baseCreateRenderer(
         // prev children was text OR null
         // new children is array OR null
         if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+          console.log('prevShapeFlag & ShapeFlags.TEXT_CHILDREN')
           hostSetElementText(container, '')
         }
         // mount new if array
         if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+          console.log('shapeFlag & ShapeFlags.ARRAY_CHILDREN')
           mountChildren(
             c2 as VNodeArrayChildren,
             container,
@@ -1736,7 +1742,7 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
-    console.log('patchUnkeyedChildren called')
+    // console.log('patchUnkeyedChildren called')
 
     c1 = c1 || EMPTY_ARR
     c2 = c2 || EMPTY_ARR
@@ -1798,7 +1804,7 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
-    console.log('patchKeyedChildren called')
+    // console.log('patchKeyedChildren called')
 
     let i = 0
     const l2 = c2.length
@@ -2026,14 +2032,14 @@ function baseCreateRenderer(
         ? getSequence(newIndexToOldIndexMap)
         : EMPTY_ARR
 
-      console.log(
-        JSON.stringify(
-          { newIndexToOldIndexMap, increasingNewIndexSequence },
-          null,
-          2
-        ),
-        'show newIndexToOldIndexMap and increasingNewIndexSequence'
-      )
+      // console.log(
+      //   JSON.stringify(
+      //     { newIndexToOldIndexMap, increasingNewIndexSequence },
+      //     null,
+      //     2
+      //   ),
+      //   'show newIndexToOldIndexMap and increasingNewIndexSequence'
+      // )
 
       j = increasingNewIndexSequence.length - 1
       // looping backwards so that we can use last patched node as anchor
@@ -2124,6 +2130,7 @@ function baseCreateRenderer(
     }
 
     if (type === Static) {
+      // console.log('type === Static')
       moveStaticNode(vnode, container, anchor)
       return
     }

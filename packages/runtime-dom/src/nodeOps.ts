@@ -8,6 +8,11 @@ const templateContainer = doc && /*#__PURE__*/ doc.createElement('template')
 
 export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
   insert: (child, parent, anchor) => {
+    /**
+     * Node.insertBefore() 方法在参考节点之前插入一个拥有指定父节点的子节点。
+     * 如果给定的子节点是对文档中现有节点的引用，
+     * insertBefore() 会将其从当前位置移动到新位置（在将节点附加到其他节点之前，不需要从其父节点删除该节点）。
+     */
     parent.insertBefore(child, anchor || null)
   },
 
