@@ -1736,6 +1736,8 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
+    console.log('patchUnkeyedChildren called')
+
     c1 = c1 || EMPTY_ARR
     c2 = c2 || EMPTY_ARR
     const oldLength = c1.length
@@ -1796,6 +1798,8 @@ function baseCreateRenderer(
     slotScopeIds: string[] | null,
     optimized: boolean
   ) => {
+    console.log('patchKeyedChildren called')
+
     let i = 0
     const l2 = c2.length
     let e1 = c1.length - 1 // prev ending index

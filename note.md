@@ -98,6 +98,11 @@ const app = createApp({
 
 ## diff 算法
 
+### patchUnkeyedChildren
+
+同时遍历各新旧 children，patch 相同索引位置的节点。
+若新 children 多出节点，挂载。
+若新 children 少了的节点，就卸载。
 
 ### patchKeyedChildren
 
@@ -149,7 +154,7 @@ matching nodes & remove nodes that are no longer present
 遍历旧 children，移除在新 children 中不再出现的节点。
 判断该节点是否出现？
 若有 key，则看是否有 key 匹配；
-若无 key，则看是否 isSameVNodeType。
+若无 key，则看是否 isSameVNodeType(key 和 type 都相等)。
 若在新 children 中再次出现，
 则 patch 之。
 
