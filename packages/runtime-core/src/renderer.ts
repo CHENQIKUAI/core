@@ -2558,5 +2558,3 @@ function getSequence(arr: number[]): number[] {
   }
   return result
 }
-
-// console.log(getSequence([1, 2, 9, 4, 5, 6]), 'show getSequence([1,2,9,4,5,6])')
