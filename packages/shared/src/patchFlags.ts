@@ -66,7 +66,7 @@ export const enum PatchFlags {
   /**
    * Indicates an element with event listeners (which need to be attached
    * during hydration)
-   * 有时间监听的元素
+   * 有事件监听的元素
    */
   HYDRATE_EVENTS = 1 << 5,
 

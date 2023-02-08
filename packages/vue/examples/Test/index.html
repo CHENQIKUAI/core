@@ -39,7 +39,7 @@
         const app = createApp({
             components: [],
             template: `
-            <div ref='testRef'>
+            <div ref='testRef' v-show="false">
                 <button @click="c">toggle</button>
                 <div>
                     <div v-for="n in ll" :key="n.key">{{n.name}}</div>
