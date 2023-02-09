@@ -95,7 +95,7 @@ function findInsertionIndex(id: number) {
 
 // 添加job，且queueFlush(在下一次进入微任务时执行queue中的任务)
 export function queueJob(job: SchedulerJob) {
-  // console.log('queueJob called', 'job id', job.id)
+  console.log('queueJob called')
   // the dedupe search uses the startIndex argument of Array.includes()
   // by default the search index includes the current job that is being run
   // so it cannot recursively trigger itself again.
@@ -132,7 +132,7 @@ function queueFlush() {
 
   if (!isFlushing && !isFlushPending) {
     isFlushPending = true
-    currentFlushPromise = resolvedPromise.then(flushJobs) // flushJobs进入微任务?
+    currentFlushPromise = resolvedPromise.then(flushJobs) // flushJobs进入微任务
   }
 }
 

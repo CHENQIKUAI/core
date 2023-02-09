@@ -13,13 +13,11 @@
     <div id="app"></div>
     <script>
         const { createApp, defineComponent, computed, watch, ref, reactive, effect } = Vue
-
         const app = createApp({
             components: [],
             template: `
-            <div ref='testRef'>
+            <div>
                 <button @click="handleClick">toggle</button>
-                
             </div>
             `,
             data() {
@@ -33,19 +31,12 @@
                     this.visible = true;
                     this.visible = false;
                     this.visible = true;
-
-                    this.test = 2;
-                    this.test = 3;
-                    this.test = 4;
                 },
             },
             watch: {
                 visible(v) {
                     console.log('visible change', v)
                 },
-                test(v) {
-                    console.log('test change', v)
-                }
             }
         }).mount('#app')
     </script>
