@@ -52,7 +52,7 @@ let isFlushPending = false // 刷新待定
 const queue: SchedulerJob[] = [] // 队列
 let flushIndex = 0 // 刷新索引
 
-// cbs猜测是callbacks
+// cbs是callbacks
 const pendingPostFlushCbs: SchedulerJob[] = [] //
 let activePostFlushCbs: SchedulerJob[] | null = null //
 let postFlushIndex = 0
@@ -93,10 +93,9 @@ function findInsertionIndex(id: number) {
   return start
 }
 
-// 添加job，且queueFlush
+// 添加job，且queueFlush(在下一次进入微任务时执行queue中的任务)
 export function queueJob(job: SchedulerJob) {
-  // console.log('queueJob called')
-
+  // console.log('queueJob called', 'job id', job.id)
   // the dedupe search uses the startIndex argument of Array.includes()
   // by default the search index includes the current job that is being run
   // so it cannot recursively trigger itself again.
@@ -108,6 +107,8 @@ export function queueJob(job: SchedulerJob) {
   // 所以，它无法回调自己。
   // 如果这个任务是watch()的回调，这个搜索，会从a+1的位置去允许它触发自己。
   // 这就需要开发者去保证它不会造成无线循环了.
+
+  // 如果queue为空，或者queue中对应位置以后不存在job
   if (
     !queue.length ||
     !queue.includes(
@@ -125,7 +126,7 @@ export function queueJob(job: SchedulerJob) {
   }
 }
 
-// 队列刷新
+// 队列刷新 将flushJobs放入微任务队列
 function queueFlush() {
   // console.log('queueFlush called')
 
@@ -241,6 +242,7 @@ const comparator = (a: SchedulerJob, b: SchedulerJob): number => {
 }
 
 // 刷新任务：清空queue，执行pendingPostFlushCbs中的函数
+// 执行队列中的任务
 function flushJobs(seen?: CountMap) {
   // console.log('flushJobs called')
 

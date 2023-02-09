@@ -14,73 +14,40 @@
     <script>
         const { createApp, defineComponent, computed, watch, ref, reactive, effect } = Vue
 
-        const l1 = [{ key: 1, name: '1' }, { key: 'b', name: '2' }, { key: 'c', name: '3' }, { key: 'd', name: '4' }, { key: 5, name: '5' }];
-        const l2 = [{ key: 1, name: '1' }, { key: 'c', name: '3333' }, { key: 'd', name: '4444' }, { key: 'b', name: '2222' }, { key: 5, name: '5' }];
-
-        /* <div key="i" v-for="(item111, index222, haha333) in list" @click="list.push({id: list.length, name: 'll'})">
-                    <div>first</div>
-                    <li>second</li>
-                    <span>third</span>
-                    <span>third</span>
-                    {{m2}}
-                </div>
-                <button @click="show = !show">switch message</button>
-                <div v-if="show">3333
-                    {{message}}
-                </div>
-                <br/> 
-                
-                <div v-for="n in ll">
-                        <input/>
-                    </div>
-                
-                */
-
         const app = createApp({
             components: [],
             template: `
-            <div ref='testRef' v-show="false">
-                <button @click="c">toggle</button>
-                <div>
-                    <div v-for="n in ll" :key="n.key">{{n.name}}</div>
-                </div>
+            <div ref='testRef'>
+                <button @click="handleClick">toggle</button>
+                
             </div>
             `,
-            mounted() {
-                // console.log('mounted');
-            },
-            beforeDestroy() {
-                console.log('beforeDestroy');
-            },
             data() {
                 return {
-                    message: 'Hello Vue!',
-                    eventName: 'click',
-                    list: [{ id: 1, name: 'nzz' }, { id: 2, name: 'ryy' }, { id: 3, name: 'lhc' }],
-                    show: false,
-                    ll: l1,
-                    o: '1',
+                    visible: false,
+                    test: 1,
                 }
             },
             methods: {
-                handleCLick() {
-                    console.log('handleCLick')
-                },
-                c() {
-                    this.o = this.o === '1' ? '2' : '1';
-                    this.ll = this.o === '1' ? l1 : l2;
+                handleClick() {
+                    this.visible = true;
+                    this.visible = false;
+                    this.visible = true;
+
+                    this.test = 2;
+                    this.test = 3;
+                    this.test = 4;
                 },
             },
-            computed: {
-                m2() {
-                    return this.message + '33'
+            watch: {
+                visible(v) {
+                    console.log('visible change', v)
+                },
+                test(v) {
+                    console.log('test change', v)
                 }
             }
         }).mount('#app')
-
-
-
-
     </script>
 </body>
 
