@@ -28,14 +28,13 @@
             },
             methods: {
                 handleClick() {
-                    this.visible = true;
-                    this.visible = false;
-                    this.visible = true;
+                    this.visible = !this.visible;
                 },
             },
             watch: {
                 visible(v) {
                     console.log('visible change', v)
+                    this.visible = !this.visible;
                 },
             }
         }).mount('#app')

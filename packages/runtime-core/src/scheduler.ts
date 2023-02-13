@@ -53,7 +53,7 @@ const queue: SchedulerJob[] = [] // 队列
 let flushIndex = 0 // 刷新索引
 
 // cbs是callbacks
-const pendingPostFlushCbs: SchedulerJob[] = [] //
+const pendingPostFlushCbs: SchedulerJob[] = [] // 当设置watch effect的flush为post的时候就会调用queuePostFlushCb函数，将副作用函数push至pendingPostFlushCbs
 let activePostFlushCbs: SchedulerJob[] | null = null //
 let postFlushIndex = 0
 
@@ -144,7 +144,7 @@ export function invalidateJob(job: SchedulerJob) {
   }
 }
 
-// 把cb推进去，然后刷新
+// 把cb推进pendingPostFlushCbs去，然后刷新
 export function queuePostFlushCb(cb: SchedulerJobs) {
   if (!isArray(cb)) {
     if (
@@ -279,7 +279,7 @@ function flushJobs(seen?: CountMap) {
       // 遍历队列
       const job = queue[flushIndex] // 任务
       if (job && job.active !== false) {
-        // 如果任务 是非激活状态的
+        // 如果任务 是激活状态的
         if (__DEV__ && check(job)) {
           continue
         }
@@ -291,7 +291,9 @@ function flushJobs(seen?: CountMap) {
     flushIndex = 0
     queue.length = 0 // 将队列清空了？为啥
 
-    flushPostFlushCbs(seen) // 指定pending状态的postFlushCbs
+    // 等queue执行完毕后，再去执行 pendingPostFlushCbs 中的任务, 当pendingPostFlushCbs任务被执行时，DOM通过queue的执行被更新了
+    // 负责DOM更新的job只会被推到queue中，这就导致了被推入pendingPostFlushCbs的任务在有DOM更新时，只会在DOM更新之后被执行。
+    flushPostFlushCbs(seen) // 指定pending状态的postFlushCbs。
 
     isFlushing = false // 刷新状态改为false
     currentFlushPromise = null // 当前FlushPromise 设置成null
@@ -303,11 +305,17 @@ function flushJobs(seen?: CountMap) {
   }
 }
 
+// 检查递归是否超出限制,若没有则更新次数
 function checkRecursiveUpdates(seen: CountMap, fn: SchedulerJob) {
   if (!seen.has(fn)) {
+    // 如果类型为Map的seen中没有为fn的key，则设置seen的一个key为fn，value为1。
     seen.set(fn, 1)
   } else {
-    const count = seen.get(fn)!
+    // 如果seen中已经存储了为fn的key。
+    const count = seen.get(fn)! // 取对应的count
+
+    console.log(count, 'show count in checkRecursiveUpdates')
+
     if (count > RECURSION_LIMIT) {
       const instance = fn.ownerInstance
       const componentName = instance && getComponentName(instance.type)
