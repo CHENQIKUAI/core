@@ -1,17 +1,3 @@
-const $data = {}
-const data = new Proxy($data, {
-  set(target, p, newValue) {
-    const oldValue = $data[p]
-    $data[p] = newValue
-    trigger(p, newValue, oldValue)
-  }
-})
-
-const deps = []
-
-function trigger(p, newValue, oldValue) {
-  deps.forEach(i => i())
-}
 const RECURSION_LIMIT = 100 // 递归限制？
 let queue = []
 let flushIndex = 0
@@ -21,20 +7,28 @@ let isFlushPending = false
 const queueJob = job => {
   if (
     !queue.length ||
-    !queue.includes(job, job.allowRecurse ? flushIndex + 1 : flushIndex)
+    !queue.includes(
+      job,
+      isFlusing && job.allowRecurse ? flushIndex + 1 : flushIndex
+    )
   ) {
     queue.push(job)
   }
+  // console.log({ isFlusing, isFlushPending }, 'in queueJob')
   if (!isFlusing && !isFlushPending) {
-    isFlusing = true
-    Promise.resolve(1).then(flushJobs)
-    isFlusing = false
+    isFlushPending = true
+    Promise.resolve(1).then(() => {
+      if (!isFlusing) flushJobs()
+    })
   }
 }
 
 const flushJobs = () => {
-  const seen = new Map()
+  if (isFlusing) return
   isFlushPending = true
+  isFlusing = true
+  const seen = new Map()
+  // console.log({ isFlusing, isFlushPending }, 'in flushJobs')
   for (flushIndex = 0; flushIndex < queue.length; ++flushIndex) {
     queue[flushIndex]()
     if (checkRescusiveUpdates(seen, queue[flushIndex])) {
@@ -42,24 +36,19 @@ const flushJobs = () => {
       break
     }
   }
+  // console.log('in flushJobs finally')
   queue = []
   flushIndex = 0
-  console.log('in flushJobs finally')
-  isFlushPending = false
+  isFlusing = false
 }
 
-function watch(source, cb) {
-  cb.allowRecurse = true
-  const scheduler = () => queueJob(cb)
-  deps.push(() => {
-    scheduler()
-  })
-}
-
-watch(data.visible, () => {
-  console.log(queue.length)
-  data.visible = !data.visible
-})
+// function watch(source, cb) {
+//   cb.allowRecurse = true
+//   const scheduler = () => queueJob(cb)
+//   deps.push(() => {
+//     scheduler()
+//   })
+// }
 
 function checkRescusiveUpdates(seen = new Map(), fn) {
   if (seen.has(fn)) {
@@ -73,4 +62,7 @@ function checkRescusiveUpdates(seen = new Map(), fn) {
   }
 }
 
-data.visible = !data.visible
+// eslint-disable-next-line no-restricted-globals
+module.exports = {
+  queueJob
+}
