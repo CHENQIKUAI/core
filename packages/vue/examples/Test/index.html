@@ -14,15 +14,14 @@
     <script>
         const { createApp, defineComponent, computed, watch, ref, reactive, effect } = Vue
 
-        /**
-        const a = reactive({ a: 1 });
-        watch(a, () => {
-            console.log(a, '--------------')
+        const data = reactive({ aaaa: 1 });
+        watch(data, () => {
+            console.log('--------------')
         })
-        a.a = 2;
+        /**
         */
 
-        const app = createApp({
+        /*const app = createApp({
             components: [],
             template: `
             <div>
@@ -37,7 +36,7 @@
             },
             watch: {
             }
-        }).mount('#app')
+        }).mount('#app')*/
     </script>
 </body>
 

@@ -10,3 +10,5 @@ const data = reactive({
 watch(data, () => {
   console.log(data.visible, data.jj)
 })
+
+data.pp = 5

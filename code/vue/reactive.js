@@ -25,23 +25,6 @@ function reactive(data) {
   return new Proxy(data, {
     get(target, p, receiver) {
       if (p === '__reactive__') {
-        if (data[p]) {
-          Object.keys(data).map(key => {
-            if (key !== '__reactive__') {
-              if (!reactiveMap.has(data)) {
-                const dataMap = new Map()
-                dataMap.set(key, [activeEffect])
-                reactiveMap.set(data, dataMap)
-              } else {
-                const dataMap = reactiveMap.get(data)
-                const deps = dataMap.get(key)
-                if (!deps) {
-                  dataMap.set(key, [activeEffect])
-                }
-              }
-            }
-          })
-        }
         return data[p]
       }
       if (!reactiveMap.has(data)) {

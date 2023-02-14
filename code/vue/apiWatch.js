@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-globals */
-// eslint-disable-next-line no-restricted-globals
 const { ReactiveEffect } = require('./reactive')
 const { queueJob } = require('./scheduler')
 
@@ -10,6 +9,7 @@ const watch = (source, cb) => {
     } else if (typeof source === 'function') {
       return source()
     } else if (source.__reactive__) {
+      traverse(source)
       return source
     }
   }
@@ -25,7 +25,16 @@ const watch = (source, cb) => {
   reactiveEffect.run()
 }
 
-// eslint-disable-next-line no-restricted-globals
+function traverse(source) {
+  const isObj = value =>
+    Object.prototype.toString.call(value) === Object.prototype.toString.call({})
+  if (isObj(source)) {
+    Object.keys(source).forEach(key => {
+      traverse(source[key])
+    })
+  }
+}
+
 module.exports = {
   watch
 }
