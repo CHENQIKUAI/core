@@ -7,8 +7,6 @@ const data = reactive({
   jj: 1
 })
 
-// watch(data, () => {
-//   console.log(data.visible, data.jj)
-// })
-
-// data.jj = 2
+watch(data, () => {
+  console.log(data.visible, data.jj)
+})

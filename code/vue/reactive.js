@@ -23,8 +23,25 @@ const reactiveMap = new WeakMap()
 function reactive(data) {
   data.__reactive__ = true
   return new Proxy(data, {
-    get(target, p) {
+    get(target, p, receiver) {
       if (p === '__reactive__') {
+        if (data[p]) {
+          Object.keys(data).map(key => {
+            if (key !== '__reactive__') {
+              if (!reactiveMap.has(data)) {
+                const dataMap = new Map()
+                dataMap.set(key, [activeEffect])
+                reactiveMap.set(data, dataMap)
+              } else {
+                const dataMap = reactiveMap.get(data)
+                const deps = dataMap.get(key)
+                if (!deps) {
+                  dataMap.set(key, [activeEffect])
+                }
+              }
+            }
+          })
+        }
         return data[p]
       }
       if (!reactiveMap.has(data)) {
@@ -45,8 +62,10 @@ function reactive(data) {
       data[p] = newValue
       if (oldValue !== newValue) {
         const dataMap = reactiveMap.get(data)
-        const deps = dataMap.get(p)
-        deps.forEach(i => i && i.scheduler && i.scheduler())
+        if (dataMap) {
+          const deps = dataMap.get(p)
+          if (deps) deps.forEach(i => i && i.scheduler && i.scheduler())
+        }
       }
     }
   })
