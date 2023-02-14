@@ -95,7 +95,7 @@ function findInsertionIndex(id: number) {
 
 // 添加job，且queueFlush(在下一次进入微任务时执行queue中的任务)
 export function queueJob(job: SchedulerJob) {
-  console.log('queueJob called')
+  // console.log('queueJob called')
   // the dedupe search uses the startIndex argument of Array.includes()
   // by default the search index includes the current job that is being run
   // so it cannot recursively trigger itself again.
@@ -276,6 +276,8 @@ function flushJobs(seen?: CountMap) {
 
   try {
     for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
+      // console.log(flushIndex, 'show flushIndex')
+
       // 遍历队列
       const job = queue[flushIndex] // 任务
       if (job && job.active !== false) {
@@ -288,6 +290,8 @@ function flushJobs(seen?: CountMap) {
       }
     }
   } finally {
+    // console.log('finally')
+
     flushIndex = 0
     queue.length = 0 // 将队列清空了？为啥
 
@@ -314,7 +318,7 @@ function checkRecursiveUpdates(seen: CountMap, fn: SchedulerJob) {
     // 如果seen中已经存储了为fn的key。
     const count = seen.get(fn)! // 取对应的count
 
-    console.log(count, 'show count in checkRecursiveUpdates')
+    // console.log(count, 'show count in checkRecursiveUpdates')
 
     if (count > RECURSION_LIMIT) {
       const instance = fn.ownerInstance

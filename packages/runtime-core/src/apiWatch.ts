@@ -359,6 +359,7 @@ function doWatch(
 
   // important: mark the job as a watcher callback so that scheduler knows
   // it is allowed to self-trigger (#1727)
+  // 如果是watch回调，那么job是可以递归调用的
   job.allowRecurse = !!cb
 
   let scheduler: EffectScheduler

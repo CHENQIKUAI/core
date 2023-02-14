@@ -17,25 +17,16 @@
             components: [],
             template: `
             <div>
-                <button @click="handleClick">toggle</button>
+                <button @click="visible = !visible;visible = !visible">toggle</button>
+                {{ visible }}
             </div>
             `,
             data() {
                 return {
                     visible: false,
-                    test: 1,
                 }
             },
-            methods: {
-                handleClick() {
-                    this.visible = !this.visible;
-                },
-            },
             watch: {
-                visible(v) {
-                    console.log('visible change', v)
-                    this.visible = !this.visible;
-                },
             }
         }).mount('#app')
     </script>

@@ -28,9 +28,39 @@ export default {
 handleClick 执行完毕。事件循环机制会去执行微任务队列的任务。然后 job 得到了执行，回调函数也得到了执行。
 最终，job 因为只推入 1 次，所以只执行了一次，监听回调也只执行了一次。
 
-
 https://juejin.cn/post/7198039436051054651
 
 # unwatch 实现
 
 清空 deps
+
+# 在 apiWatch.ts 文件中，为什么 allowRecurse 置为 true，watch cb 就可以无限回调
+
+visible = !visible
+检测 queue 中是否存在 job。
+不存在，queue 推入 job。
+执行完毕。
+
+微任务队列被执行，queue 中 job 被遍历执行。
+从索引 flushIndex 0 开始，拿到 job
+执行 job，visible = !visible
+
+{
+检测 queue 中是否存在 job。（从 flushIndex + 1 的位置 即 1 开始查找）
+不存在，queue 推入 job （标记为 job1）。
+}
+
+从索引 flushIndex 1 开始，拿到 job（此 job 是 job1）
+执行 job，visible = !visible
+
+{
+检测 queue 中是否存在 job。（从 flushIndex + 1 的位置即 2 开始查找）
+不存在，queue 推入 job （标记为 job1）。
+}
+
+......
+
+到了 100 次，
+
+打印 finally
+queue 队列 被清空。设置成空数组。flushIndex 设置成 0。
