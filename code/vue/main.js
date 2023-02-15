@@ -1,14 +1,25 @@
 /* eslint-disable no-restricted-globals */
-const { watch } = require('./apiWatch')
-const { reactive } = require('./reactive')
+
+const env = {
+  my: './myVue.js',
+  vue: '../../packages/vue/dist/vue.cjs'
+}
+
+const { watch, reactive, computed } = require(env.my)
 
 const data = reactive({
   visible: false,
   jj: 1
 })
 
-watch(data, () => {
-  console.log(data.visible, data.jj)
+const jPlusOne = computed(() => {
+  return data.jj + 1
 })
 
-data.pp = 5
+watch(jPlusOne, () => {
+  console.log(jPlusOne.value, 'in watch watchJPlusOne')
+})
+
+console.log(jPlusOne.value)
+data.jj = 5
+console.log(jPlusOne.value)

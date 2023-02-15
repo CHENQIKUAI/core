@@ -3,6 +3,12 @@
 const { queueJob } = require('./scheduler')
 let activeEffect = null
 
+const setActiveEffect = v => {
+  activeEffect = v
+}
+
+const getActiveEffect = () => activeEffect
+
 class ReactiveEffect {
   constructor(fn, scheduler) {
     this.fn = fn
@@ -19,6 +25,9 @@ class ReactiveEffect {
 }
 
 const reactiveMap = new WeakMap()
+function getReactiveMap() {
+  return reactiveMap
+}
 
 function reactive(data) {
   data.__reactive__ = true
@@ -77,5 +86,8 @@ function reactive(data) {
 
 module.exports = {
   ReactiveEffect,
-  reactive
+  reactive,
+  setActiveEffect,
+  getActiveEffect,
+  getReactiveMap
 }

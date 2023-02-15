@@ -4,6 +4,7 @@
   "packageManager": "pnpm@7.1.0",
   "scripts": {
     "dev": "node scripts/dev.js",
+    "dev-cjs": "node scripts/dev.js -if cjs",
     "build": "node scripts/build.js",
     "size": "run-s size-global size-baseline",
     "size-global": "node scripts/build.js vue runtime-dom -f global -p",

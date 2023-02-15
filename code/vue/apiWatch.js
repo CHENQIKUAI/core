@@ -11,9 +11,14 @@ const watch = (source, cb) => {
     } else if (source.__reactive__) {
       traverse(source)
       return source
+    } else if (source.__is_ref__) {
+      // source.scheduler = () => {
+      //   queueJob(job)
+      // }
+      return source.value
     }
   }
-  const job = () => {
+  function job() {
     cb()
   }
   job.allowRecurse = true

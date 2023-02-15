@@ -1,32 +1,3 @@
-const template = `
-<!-- <el-button size="small" type="primary" @click="doAdd">新增任务</el-button> -->
-<el-popover placement="bottom" trigger="click">
-  <template>
-    <div v-for="item in 10" :key="item">
-      <el-button
-        style="width:100%;padding: 8px;"
-        size="mini"
-        type="text"
-        @click="doClick('调优',1 ,'combine',item)"
-      >
-        {{item}}
-        <span v-if="item ===1 ">（最低）</span>
-        <span v-if="item ===10 ">（最高）</span>
-      </el-button>
-    </div>
-  </template>
-  <el-button style="margin-right:10px;padding-top: 8px;" slot="reference" size="small">
-    批量调优
-    <i class="el-icon-arrow-down"></i>
-  </el-button>
-</el-popover>
-
-`
-console.log(
-  parseTemplate({
-    value: template
-  })
-)
 function advanceSpace(content: { value: string }) {
   const match = content.value.match(/^[\n\f\r ]*/)
   if (match) {
