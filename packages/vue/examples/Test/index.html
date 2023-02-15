@@ -16,8 +16,9 @@
 
         const data = reactive({ aaaa: 1 });
         watch(data, () => {
-            console.log('--------------')
+            console.log('show data', data)
         })
+        data.mmm = 2;
         /**
         */
 

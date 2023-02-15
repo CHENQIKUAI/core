@@ -29,9 +29,9 @@ function traverse(source) {
   const isObj = value =>
     Object.prototype.toString.call(value) === Object.prototype.toString.call({})
   if (isObj(source)) {
-    Object.keys(source).forEach(key => {
-      traverse(source[key])
-    })
+    for (let v in source) {
+      traverse(v)
+    }
   }
 }
 

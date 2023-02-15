@@ -64,3 +64,48 @@ visible = !visible
 
 打印 finally
 queue 队列 被清空。设置成空数组。flushIndex 设置成 0。
+
+# vue3 packages\reactivity\src\baseHandlers.ts 中 ownKeys 函数 的作用
+
+```js
+function ownKeys(target: object): (string | symbol)[] {
+  track(target, TrackOpTypes.ITERATE, isArray(target) ? 'length' : ITERATE_KEY)
+  return Reflect.ownKeys(target)
+}
+```
+
+```js
+const data = reactive({ a: 1 })
+watch(data, newV => {
+  console.log(newV, 'data changed')
+})
+data.b = 2
+
+
+function traverse(value: unknown, seen?: Set<unknown>) {
+  if (!isObject(value) || (value as any)[ReactiveFlags.SKIP]) {
+    return value
+  }
+  seen = seen || new Set()
+  if (seen.has(value)) {
+    return value
+  }
+  seen.add(value)
+  if (isRef(value)) {
+    traverse(value.value, seen)
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      traverse(value[i], seen)
+    }
+  } else if (isSet(value) || isMap(value)) {
+    value.forEach((v: any) => {
+      traverse(v, seen)
+    })
+  } else if (isPlainObject(value)) {
+    for (const key in value) {
+      traverse((value as any)[key], seen)
+    }
+  }
+  return value
+}
+```

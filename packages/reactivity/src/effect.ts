@@ -219,7 +219,7 @@ export function resetTracking() {
 // 收集依赖
 // 因此每次执行 track 函数，就是把当前激活的副作用函数 activeEffect 作为依赖，然后收集到 target 相关的 depsMap 对应 key 下的依赖集合 dep 中
 export function track(target: object, type: TrackOpTypes, key: unknown) {
-  // console.log(target, key, 'show target and key in track fn')
+  // console.log(target, key, 'in track')
 
   if (shouldTrack && activeEffect) {
     let depsMap = targetMap.get(target)
@@ -280,6 +280,8 @@ export function trigger(
   oldTarget?: Map<unknown, unknown> | Set<unknown>
 ) {
   const depsMap = targetMap.get(target)
+  // console.log(target, key, type, 'in trigger')
+
   if (!depsMap) {
     // never been tracked
     return

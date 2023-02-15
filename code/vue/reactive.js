@@ -48,8 +48,29 @@ function reactive(data) {
         if (dataMap) {
           const deps = dataMap.get(p)
           if (deps) deps.forEach(i => i && i.scheduler && i.scheduler())
+          else {
+            const deps = dataMap.get('__iterator__')
+            deps.forEach(i => i && i.scheduler && i.scheduler())
+          }
         }
       }
+    },
+    ownKeys(target) {
+      const isObj = value =>
+        Object.prototype.toString.call(value) ===
+        Object.prototype.toString.call({})
+      if (isObj(target)) {
+        const dataMap = reactiveMap.get(target)
+        if (!dataMap) {
+          const dataMap = new Map()
+          reactiveMap.set(target, dataMap)
+          dataMap.set('__iterator__', [activeEffect])
+        } else {
+          dataMap.set('__iterator__', [activeEffect])
+        }
+      } else if (Array.isArray(target)) {
+      }
+      return Reflect.ownKeys(target)
     }
   })
 }
