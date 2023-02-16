@@ -5,24 +5,44 @@ const env = {
   vue: '../../packages/vue/dist/vue.cjs'
 }
 
-const { watch, reactive, computed } = require(env.my)
+const { watch, reactive, computed, ref } = require(env.my)
 
-const data = reactive({
-  visible: false,
-  jj: 1
+const data = reactive({ count: 1 })
+
+const multiply10 = computed(() => {
+  return data.count * 10
 })
 
-const jPlusOne = computed(() => {
-  return data.jj + 1
-})
+// watch(
+//   () => data.count,
+//   newV => {
+//     console.log(newV, 'watch data.count')
+//   }
+// )
 
-watch(jPlusOne, () => {
-  console.log(jPlusOne.value, 'in watch watchJPlusOne')
-})
+watch(
+  () => multiply10.value,
+  (newV, oldV) => {
+    console.log(newV, 'watch multiply10---')
+  }
+)
 
-console.log(jPlusOne.value)
-data.jj = 5
-console.log(jPlusOne.value)
+// watch(
+//   () => multiply10.value,
+//   (newV, oldV) => {
+//     console.log(newV, 'watch multiply10+++')
+//   }
+// )
+
+data.count = 11222
+data.count = 22
+data.count = 3
+
+// data.count = 1
+
+/**
+ * 要注册的回调函数都是放在activeEffect里，供需要的使用
+ */
 
 /**
  * 响应式数据帮助一个数据的属性在被修改时，能够回调事先所指定的函数。

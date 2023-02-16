@@ -54,14 +54,14 @@ export class ComputedRefImpl<T> {
   }
 
   get value() {
-    // console.log(activeEffect, 'show activeEffect in get value')
     // TODO: activeEffect在什么时间被设置了
     // the computed ref may get wrapped by other proxies e.g. readonly() #3376
     const self = toRaw(this)
+    // console.log(this.dep, 'show dep');
     trackRefValue(self) // 往ComputedRefImpl的dep属性中添加副作用
     if (self._dirty || !self._cacheable) {
       self._dirty = false
-      self._value = self.effect.run()! // 会将self.effect保存到activeEffect
+      self._value = self.effect.run()! // 会将self.effect这个副作用保存到activeEffect
     }
     return self._value
   }

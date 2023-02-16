@@ -36,17 +36,22 @@ function reactive(data) {
       if (p === '__reactive__') {
         return data[p]
       }
-      if (!reactiveMap.has(data)) {
-        const dataMap = new Map()
-        dataMap.set(p, [activeEffect])
-        reactiveMap.set(data, dataMap)
-      } else {
-        const dataMap = reactiveMap.get(data)
-        const deps = dataMap.get(p)
-        if (!deps) {
+      if (activeEffect) {
+        if (!reactiveMap.has(data)) {
+          const dataMap = new Map()
           dataMap.set(p, [activeEffect])
+          reactiveMap.set(data, dataMap)
+        } else {
+          const dataMap = reactiveMap.get(data)
+          const deps = dataMap.get(p)
+          if (!deps) {
+            dataMap.set(p, [activeEffect])
+          } else {
+            dataMap.set(p, [...deps, activeEffect])
+          }
         }
       }
+
       return data[p]
     },
     set(target, p, newValue) {
@@ -56,11 +61,14 @@ function reactive(data) {
         const dataMap = reactiveMap.get(data)
         if (dataMap) {
           const deps = dataMap.get(p)
-          if (deps) deps.forEach(i => i && i.scheduler && i.scheduler())
-          else {
-            const deps = dataMap.get('__iterator__')
-            deps.forEach(i => i && i.scheduler && i.scheduler())
-          }
+          if (deps)
+            deps.forEach(
+              i => i && i.scheduler && i.scheduler(newValue, oldValue)
+            )
+          const deps2 = dataMap.get('__iterator__') || []
+          deps2.forEach(
+            i => i && i.scheduler && i.scheduler(newValue, oldValue)
+          )
         }
       }
     },
@@ -68,17 +76,21 @@ function reactive(data) {
       const isObj = value =>
         Object.prototype.toString.call(value) ===
         Object.prototype.toString.call({})
-      if (isObj(target)) {
-        const dataMap = reactiveMap.get(target)
-        if (!dataMap) {
-          const dataMap = new Map()
-          reactiveMap.set(target, dataMap)
-          dataMap.set('__iterator__', [activeEffect])
-        } else {
-          dataMap.set('__iterator__', [activeEffect])
+      if (activeEffect) {
+        if (isObj(target)) {
+          const dataMap = reactiveMap.get(target)
+          if (!dataMap) {
+            const dataMap = new Map()
+            reactiveMap.set(target, dataMap)
+            dataMap.set('__iterator__', [activeEffect])
+          } else {
+            const deps = dataMap.get('__iterator__') || []
+            dataMap.set('__iterator__', [...deps, activeEffect])
+          }
+        } else if (Array.isArray(target)) {
         }
-      } else if (Array.isArray(target)) {
       }
+
       return Reflect.ownKeys(target)
     }
   })

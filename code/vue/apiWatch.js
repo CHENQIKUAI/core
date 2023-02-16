@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const { ReactiveEffect } = require('./reactive')
+const { ReactiveEffect, getActiveEffect } = require('./reactive')
 const { queueJob } = require('./scheduler')
 
 const watch = (source, cb) => {
@@ -12,22 +12,24 @@ const watch = (source, cb) => {
       traverse(source)
       return source
     } else if (source.__is_ref__) {
-      // source.scheduler = () => {
-      //   queueJob(job)
-      // }
       return source.value
     }
   }
+  let newValue, oldValue
   function job() {
-    cb()
+    if (newValue !== oldValue) {
+      oldValue = newValue
+      cb(newValue, oldValue)
+    }
   }
   job.allowRecurse = true
-  const scheduler = () => {
+  const scheduler = (newV, oldV) => {
+    newValue = newV
     queueJob(job)
   }
   const reactiveEffect = new ReactiveEffect(getter, scheduler)
 
-  reactiveEffect.run()
+  oldValue = reactiveEffect.run()
 }
 
 function traverse(source) {

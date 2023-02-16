@@ -399,7 +399,7 @@ function doWatch(
   } else {
     effect.run()
   }
-
+  
   const unwatch = () => {
     effect.stop()
     if (instance && instance.scope) {

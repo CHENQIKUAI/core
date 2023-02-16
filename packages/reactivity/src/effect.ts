@@ -243,6 +243,10 @@ export function trackEffects(
   dep: Dep,
   debuggerEventExtraInfo?: DebuggerEventExtraInfo
 ) {
+  // 这里的dep存储的位置有3种可能性。
+  // 1. targetMap中
+  // 2. RefImpl对象的dep
+  // 3. ComputedRefImpl对象的dep
   let shouldTrack = false
   if (effectTrackDepth <= maxMarkerBits) {
     if (!newTracked(dep)) {
