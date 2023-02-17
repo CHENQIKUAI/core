@@ -42,6 +42,7 @@ export class ComputedRefImpl<T> {
     isSSR: boolean
   ) {
     this.effect = new ReactiveEffect(getter, () => {
+      console.log('computed scheduler');
       // new ReactiveEffect传入fn和scheduler
       if (!this._dirty) {
         this._dirty = true
