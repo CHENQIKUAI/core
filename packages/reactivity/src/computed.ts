@@ -42,7 +42,7 @@ export class ComputedRefImpl<T> {
     isSSR: boolean
   ) {
     this.effect = new ReactiveEffect(getter, () => {
-      console.log('computed scheduler');
+      // console.log('computed scheduler', getter())
       // new ReactiveEffect传入fn和scheduler
       if (!this._dirty) {
         this._dirty = true
@@ -63,6 +63,7 @@ export class ComputedRefImpl<T> {
     if (self._dirty || !self._cacheable) {
       self._dirty = false
       self._value = self.effect.run()! // 会将self.effect这个副作用保存到activeEffect
+      // console.log('after self._value set')
     }
     return self._value
   }
