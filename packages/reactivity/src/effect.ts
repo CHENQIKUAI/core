@@ -101,9 +101,13 @@ export class ReactiveEffect<T = any> {
       parent = parent.parent
     }
     try {
+      // parent存在的意义是什么？
       this.parent = activeEffect // 保存激活effect到parent
       activeEffect = this // 更新激活effect为当前实例对象
       shouldTrack = true // ?
+
+      // console.log(!!activeEffect, 'before');
+      
 
       trackOpBit = 1 << ++effectTrackDepth
 
@@ -120,6 +124,9 @@ export class ReactiveEffect<T = any> {
       }
 
       trackOpBit = 1 << --effectTrackDepth
+
+      // console.log(!!activeEffect, 'after');
+      
 
       activeEffect = this.parent
       shouldTrack = lastShouldTrack
